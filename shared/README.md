@@ -2,7 +2,7 @@
 
 ## Service Description
 
-The Shared package contains common TypeScript types, interfaces, and utilities used across all microservices and the UI in the PeerPrep platform. This centralized package ensures type consistency, reduces code duplication, and provides a single source of truth for data structures shared between frontend and backend services.
+The Shared package contains common TypeScript types, interfaces, and utilities used across all microservices and the UI in the AlgoBuddy platform. This centralized package ensures type consistency, reduces code duplication, and provides a single source of truth for data structures shared between frontend and backend services.
 
 ## Architecture and Dependencies
 

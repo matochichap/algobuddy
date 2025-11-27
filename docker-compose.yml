@@ -1,4 +1,4 @@
-name: peerprep
+name: algobuddy
 services:
   ui:
     build:
@@ -19,7 +19,7 @@ services:
     ports:
       - "4000:4000"
     networks:
-      - peerprep
+      - algobuddy
   user-service:
     build:
       context: .
@@ -30,7 +30,7 @@ services:
       - ./user-service/.env.production.local
       - ./.env.production.local
     networks:
-      - peerprep
+      - algobuddy
     depends_on:
       - mongo-init
   matching-service:
@@ -43,7 +43,7 @@ services:
       - ./matching-service/.env.production.local
       - ./.env.production.local
     networks:
-      - peerprep
+      - algobuddy
     depends_on:
       - redis
   question-service:
@@ -56,7 +56,7 @@ services:
       - ./question-service/.env.production.local
       - ./.env.production.local
     networks:
-      - peerprep
+      - algobuddy
     depends_on:
       - mongo-init
   collaboration-service:
@@ -69,7 +69,7 @@ services:
       - ./collaboration-service/.env.production.local
       - ./.env.production.local
     networks:
-      - peerprep
+      - algobuddy
   ai-service:
     build:
       context: .
@@ -80,7 +80,7 @@ services:
       - ./ai-service/.env.production.local
       - ./.env.production.local
     networks:
-      - peerprep
+      - algobuddy
   redis:
     image: redis:latest
     hostname: "redis"
@@ -88,7 +88,7 @@ services:
     volumes:
       - ./db/redis_data_build:/data/db
     networks:
-      - peerprep
+      - algobuddy
   mongo:
     image: mongo
     hostname: "mongo"
@@ -96,19 +96,19 @@ services:
     volumes:
       - ./db/mongo_data_build:/data/db
     networks:
-      - peerprep
+      - algobuddy
   mongo-init:
     image: mongo
     volumes:
       - ./db/config/init-mongo.sh:/init-mongo.sh
     entrypoint: sh /init-mongo.sh
     networks:
-      - peerprep
+      - algobuddy
     depends_on:
       - mongo
 
 networks:
-  peerprep:
+  algobuddy:
 
 
 volumes:

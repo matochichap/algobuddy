@@ -1,9 +1,5 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/QUdQy4ix)
-# CS3219 Project (PeerPrep) - AY2526S1
-## Group: G31
-
-## Project Overview
-PeerPrep is a collaborative technical interview preparation platform that enables users to practice coding questions together in real-time. The application uses a microservices architecture to provide user authentication, question management, peer matching, and real-time collaboration features.
+## Overview
+AlgoBuddy is a collaborative technical interview preparation platform that enables users to practice coding questions together in real-time. The application uses a microservices architecture to provide user authentication, question management, peer matching, and real-time collaboration features.
 
 ## Architecture and Dependencies
 

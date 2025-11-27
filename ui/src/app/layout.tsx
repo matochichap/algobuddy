@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "PeerPrep",
+  title: "AlgoBuddy",
   description: "A platform for collaborative learning",
 };
 

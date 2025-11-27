@@ -2,7 +2,7 @@
 
 ## Service Description
 
-The User Service is responsible for user authentication, authorization, and profile management in the PeerPrep platform. It handles Google OAuth 2.0 authentication, JWT token generation and validation, user CRUD operations, and maintains user sessions using refresh tokens stored in MongoDB.
+The User Service is responsible for user authentication, authorization, and profile management in the AlgoBuddy platform. It handles Google OAuth 2.0 authentication, JWT token generation and validation, user CRUD operations, and maintains user sessions using refresh tokens stored in MongoDB.
 
 ## Architecture and Dependencies
 
@@ -30,7 +30,7 @@ The User Service is responsible for user authentication, authorization, and prof
 ## Environment Variables
 
 Create a `.env` file in the `user-service` directory with the following variables:
-
+`
 ```bash
 # Google OAuth Configuration
 GOOGLE_CLIENT_ID=<your-google-client-id>                    # OAuth 2.0 client ID from Google Console

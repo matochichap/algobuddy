@@ -2,7 +2,7 @@
 
 ## Service Description
 
-The API Gateway acts as the single entry point for all client requests to the PeerPrep platform. It handles authentication, authorization, request routing, and proxying to downstream microservices. The gateway verifies JWT tokens, enforces role-based access control, and forwards authenticated user information to backend services.
+The API Gateway acts as the single entry point for all client requests to the AlgoBuddy platform. It handles authentication, authorization, request routing, and proxying to downstream microservices. The gateway verifies JWT tokens, enforces role-based access control, and forwards authenticated user information to backend services.
 
 ## Architecture and Dependencies
 

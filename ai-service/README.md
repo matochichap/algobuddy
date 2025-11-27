@@ -1,5 +1,5 @@
 ### AI Service
-esponsible for providing intelligent assistance within the PeerPrep platform. It enables AI-assisted explanations, problem solving, and conceptual expansion for coding tasks. Users can receive contextual explanations of code, hints, suggestions for debugging, and test-case generation, enhancing collaboration and learning experiences.
+esponsible for providing intelligent assistance within the AlgoBuddy platform. It enables AI-assisted explanations, problem solving, and conceptual expansion for coding tasks. Users can receive contextual explanations of code, hints, suggestions for debugging, and test-case generation, enhancing collaboration and learning experiences.
 
 ### Set up
 1. `npm install -g yarn`

@@ -2,7 +2,7 @@
 
 ## Service Description
 
-The UI is a Next.js application that serves as the frontend for the PeerPrep platform. It provides an intuitive user interface for authentication, question browsing, peer matching, and real-time collaborative coding sessions. Built with React and Tailwind CSS, it offers a modern, responsive, and performant user experience.
+The UI is a Next.js application that serves as the frontend for the AlgoBuddy platform. It provides an intuitive user interface for authentication, question browsing, peer matching, and real-time collaborative coding sessions. Built with React and Tailwind CSS, it offers a modern, responsive, and performant user experience.
 
 ## Architecture and Dependencies
 
