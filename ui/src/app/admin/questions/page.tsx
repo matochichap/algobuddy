@@ -4,13 +4,6 @@ import Header from '@/components/Header';
 import { useAuth } from '@/contexts/AuthContext';
 import { useEffect, useState } from 'react';
 
-/**
- * AI Assistance Disclosure
- * Tool: ChatGPT
- * Scope: See AI-usage-log for details.
- * Author review: See AI-usage-log for details.
- */
-
 // shape should match your Prisma model
 type Question = {
   id: string;
@@ -273,11 +266,10 @@ export default function AdminQuestionsPage() {
                 {questions.map((q) => (
                   <li
                     key={q.id}
-                    className={`py-4 cursor-pointer rounded-md px-3 ${
-                      selected?.id === q.id
+                    className={`py-4 cursor-pointer rounded-md px-3 ${selected?.id === q.id
                         ? 'bg-gray-700'
                         : 'hover:bg-gray-700/60'
-                    }`}
+                      }`}
                     onClick={() => {
                       setSelected(q);
                       setEditing(q);
@@ -288,13 +280,12 @@ export default function AdminQuestionsPage() {
                       <div className="text-gray-100 font-medium flex items-center gap-2 mb-1">
                         <span className="truncate">{q.title || '(no title)'}</span>
                         <span
-                          className={`text-[10px] px-2 py-0.5 rounded-full border ${
-                            q.difficulty === 'HARD'
+                          className={`text-[10px] px-2 py-0.5 rounded-full border ${q.difficulty === 'HARD'
                               ? 'bg-red-600/30 border-red-500 text-red-200'
                               : q.difficulty === 'MEDIUM'
-                              ? 'bg-yellow-600/30 border-yellow-500 text-yellow-200'
-                              : 'bg-green-600/30 border-green-500 text-green-200'
-                          }`}
+                                ? 'bg-yellow-600/30 border-yellow-500 text-yellow-200'
+                                : 'bg-green-600/30 border-green-500 text-green-200'
+                            }`}
                         >
                           {q.difficulty}
                         </span>
@@ -373,27 +364,27 @@ export default function AdminQuestionsPage() {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-200 mb-1">
-                            Topic
-                        </label>
-                        <select
-                            className="w-full bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500"
-                            disabled={busy}
-                            value={editing.topics && editing.topics.length > 0 ? editing.topics[0] : ""}
-                            onChange={(e) => {
-                                const chosen = e.target.value;
-                                setEditing({
-                                    ...editing,
-                                    topics: chosen ? [chosen] : [],
-                                });
-                            }}
-                        >
-                            {TOPIC_OPTIONS.map((topic) => (
-                                <option key={topic} value={topic}>
-                                    {topic.replace(/_/g, " ")}
-                                </option>
-                            ))}
-                        </select>
+                      <label className="block text-sm font-medium text-gray-200 mb-1">
+                        Topic
+                      </label>
+                      <select
+                        className="w-full bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500"
+                        disabled={busy}
+                        value={editing.topics && editing.topics.length > 0 ? editing.topics[0] : ""}
+                        onChange={(e) => {
+                          const chosen = e.target.value;
+                          setEditing({
+                            ...editing,
+                            topics: chosen ? [chosen] : [],
+                          });
+                        }}
+                      >
+                        {TOPIC_OPTIONS.map((topic) => (
+                          <option key={topic} value={topic}>
+                            {topic.replace(/_/g, " ")}
+                          </option>
+                        ))}
+                      </select>
                     </div>
                   </div>
 
@@ -510,25 +501,25 @@ export default function AdminQuestionsPage() {
 
                   <div>
                     <label className="block text-sm font-medium text-gray-200 mb-1">
-                        Topic
+                      Topic
                     </label>
                     <select
-                        className="w-full bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500"
-                        disabled={busy}
-                        value={newDraft.topics && newDraft.topics.length > 0 ? newDraft.topics[0] : ""}
-                        onChange={(e) => {
+                      className="w-full bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500"
+                      disabled={busy}
+                      value={newDraft.topics && newDraft.topics.length > 0 ? newDraft.topics[0] : ""}
+                      onChange={(e) => {
                         const chosen = e.target.value;
                         setNewDraft({
-                            ...newDraft,
-                            topics: chosen ? [chosen] : [],
+                          ...newDraft,
+                          topics: chosen ? [chosen] : [],
                         });
-                        }}
+                      }}
                     >
-                        {TOPIC_OPTIONS.map((topic) => (
+                      {TOPIC_OPTIONS.map((topic) => (
                         <option key={topic} value={topic}>
-                            {topic.replace(/_/g, " ")}
+                          {topic.replace(/_/g, " ")}
                         </option>
-                        ))}
+                      ))}
                     </select>
                   </div>
                 </div>

@@ -4,13 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import Spinner from '@/components/Spinner';
 
-/**
- * AI Assistance Disclosure
- * Tool: Microsoft Copilot  
- * Scope: Generated initial HTML code.
- * Author review: Validated correctness and modified HTML code and styling.
- */
-
 export default function Login() {
     const { accessToken, isLoading } = useAuth();
     const router = useRouter();

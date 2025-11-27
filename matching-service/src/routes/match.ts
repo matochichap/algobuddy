@@ -5,13 +5,6 @@ import { notifyMatch } from "../config/websocket";
 import { Difficulty, Topic, Language } from "../constants/question";
 import { resolveMatchedValue } from "../utils/match";
 
-/**
- * AI Assistance Disclosure
- * Tool: Microsoft Copilot
- * Scope: Generated initial start route implementation.
- * Author review: Validated correctness.
- */
-
 const router = express.Router();
 
 router.post("/start", async (req, res) => {

@@ -7,13 +7,6 @@ import { createRefreshToken, deleteRefreshToken, validateRefreshToken } from '..
 import { JWT_REFRESH_EXPIRES_DAYS } from "../utils/jwt";
 import { prisma } from "../db/prisma";
 
-/**
- * AI Assistance Disclosure
- * Tool: Microsoft Copilot
- * Scope: See AI-usage-log for details.
- * Author review: See AI-usage-log for details.
- */
-
 const router = Router();
 
 // Redirect to google for authentication
