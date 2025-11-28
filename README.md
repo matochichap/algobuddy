@@ -82,7 +82,6 @@ JWT_REFRESH_SECRET=<your-secret-key>  # Secret for signing JWT refresh tokens
 2. **Clone the repository**:
    ```bash
    git clone <repository-url>
-   cd cs3219-ay2526s1-project-g31
    ```
 
 3. **Set up environment variables**:

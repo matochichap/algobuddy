@@ -6,7 +6,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 interface AuthContextType {
     isLoading: boolean;
     accessToken: string | null;
-    logout: () => void;
+    logout: () => Promise<void>;
     refreshAccessToken: () => Promise<string | null>;
     authFetch: (url: string, options?: RequestInit) => Promise<Response>;
 }
@@ -18,7 +18,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const [accessToken, setAccessToken] = useState<string | null>(null);
     const router = useRouter();
 
-    const logout = useCallback(async () => {
+    const logout = useCallback(async (): Promise<void> => {
         try {
             await fetch(`${process.env.NEXT_PUBLIC_USER_SERVICE_BASE_URL}/api/auth/logout`, {
                 method: 'POST',

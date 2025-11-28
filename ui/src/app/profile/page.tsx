@@ -87,7 +87,7 @@ export default function Profile() {
                 throw new Error('Failed to delete profile');
             }
 
-            logout();
+            await logout();
         } catch (err) {
             setError('Failed to delete profile. Please try again.');
             console.error('Delete profile error:', err);

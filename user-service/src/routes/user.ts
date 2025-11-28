@@ -3,6 +3,7 @@ import { prisma } from "../db/prisma";
 import { UserRole } from "@prisma/client";
 import { validate } from "../middleware/validate";
 import { AuthRequest } from "shared";
+import { deleteRefreshToken } from "../utils/refreshToken";
 import { adminUpdateUserSchema, idParamSchema, searchUsersQuerySchema, updateMeSchema } from "../validators/user";
 
 const router = Router();
@@ -50,10 +51,8 @@ router.delete('/me', async (req, res) => {
         if (!userId) {
             return res.status(401).json({ error: "Unauthorized" });
         }
-        // Delete all refresh tokens for the user
-        await prisma.refreshToken.deleteMany({
-            where: { userId },
-        });
+        // Delete refresh token for user
+        await deleteRefreshToken(userId);
 
         // Delete the user
         await prisma.user.delete({
@@ -112,14 +111,10 @@ router.put('/:id', validate({ params: idParamSchema, body: adminUpdateUserSchema
 
 router.delete('/:id', async (req, res) => {
     try {
-        await prisma.refreshToken.deleteMany({
-            where: {
-                user: {
-                    google_id: req.params.id,
-                },
-            },
-        });
+        // Delete refresh token for user
+        await deleteRefreshToken(req.params.id);
 
+        // Delete user
         await prisma.user.delete({
             where: { google_id: req.params.id },
         });

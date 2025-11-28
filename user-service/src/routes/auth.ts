@@ -1,10 +1,9 @@
-import jwt from "jsonwebtoken";
 import passport from "passport";
 import { Router } from "express";
 import { User } from "@prisma/client";
-import { generateAccessToken, generateRefreshToken, RefreshTokenPayload } from '../utils/jwt';
+import { generateAccessToken } from '../utils/jwt';
 import { createRefreshToken, deleteRefreshToken, validateRefreshToken } from '../utils/refreshToken';
-import { JWT_REFRESH_EXPIRES_DAYS } from "../utils/jwt";
+import { JWT_REFRESH_EXPIRES_DAYS } from "../config/constants";
 import { prisma } from "../db/prisma";
 
 const router = Router();
@@ -28,8 +27,13 @@ router.get('/google/callback', async (req, res) => {
 
         try {
             // Create new refresh token in db
-            const tokenId = await createRefreshToken(user.id);
-            const refreshToken = generateRefreshToken(user.id, tokenId);
+            const refreshToken = await createRefreshToken(user.id);
+            res.cookie('userId', user.id, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'lax',
+                maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
+            });
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,
@@ -47,14 +51,18 @@ router.get('/google/callback', async (req, res) => {
 
 router.post('/refresh', async (req, res) => {
     try {
+        const userId = req.cookies.userId;
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID not provided.' });
+        }
+
         const refreshToken = req.cookies.refreshToken;
         if (!refreshToken) {
             return res.status(401).json({ error: 'Refresh token not provided' });
         }
 
-        const { tokenId } = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as RefreshTokenPayload;
-        const userId = await validateRefreshToken(tokenId);
-        if (!userId) {
+        const validUserId = await validateRefreshToken(userId, refreshToken);
+        if (userId !== validUserId) {
             return res.status(401).json({ error: 'Invalid or expired refresh token.' });
         }
 
@@ -76,13 +84,18 @@ router.post('/refresh', async (req, res) => {
 
 router.post('/logout', async (req, res) => {
     try {
-        const refreshToken = req.cookies.refreshToken;
-        if (!refreshToken) {
-            return res.status(400).json({ error: 'No refresh token.' });
+        const userId = req.cookies.userId;
+        if (!userId) {
+            return res.status(400).json({ error: 'User ID not provided.' });
         }
 
-        const { tokenId } = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET!) as RefreshTokenPayload;
-        await deleteRefreshToken(tokenId);
+        await deleteRefreshToken(userId);
+
+        res.clearCookie('userId', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'lax'
+        });
 
         res.clearCookie('refreshToken', {
             httpOnly: true,

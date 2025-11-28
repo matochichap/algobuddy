@@ -31,7 +31,7 @@ const TOPIC_OPTIONS = [
 
 
 export default function AdminQuestionsPage() {
-  const { authFetch, refreshAccessToken } = useAuth();
+  const { authFetch } = useAuth();
 
   // data
   const [questions, setQuestions] = useState<Question[]>([]);
@@ -121,7 +121,6 @@ export default function AdminQuestionsPage() {
       );
       setSelected(updated);
       setEditing(updated);
-      refreshAccessToken();
     } catch (err) {
       console.error(err);
       setError('Failed to update question');
@@ -153,7 +152,6 @@ export default function AdminQuestionsPage() {
       setSelected(null);
       setEditing(null);
       setShowDeleteConfirm(false);
-      refreshAccessToken();
     } catch (err) {
       console.error(err);
       setError('Failed to delete question');
@@ -192,7 +190,6 @@ export default function AdminQuestionsPage() {
       setQuestions(prev => [created, ...prev]); // prepend newest
       setShowCreateForm(false);
       setNewDraft(emptyDraft);
-      refreshAccessToken();
     } catch (err) {
       console.error(err);
       setError('Failed to create question');
@@ -267,8 +264,8 @@ export default function AdminQuestionsPage() {
                   <li
                     key={q.id}
                     className={`py-4 cursor-pointer rounded-md px-3 ${selected?.id === q.id
-                        ? 'bg-gray-700'
-                        : 'hover:bg-gray-700/60'
+                      ? 'bg-gray-700'
+                      : 'hover:bg-gray-700/60'
                       }`}
                     onClick={() => {
                       setSelected(q);
@@ -281,10 +278,10 @@ export default function AdminQuestionsPage() {
                         <span className="truncate">{q.title || '(no title)'}</span>
                         <span
                           className={`text-[10px] px-2 py-0.5 rounded-full border ${q.difficulty === 'HARD'
-                              ? 'bg-red-600/30 border-red-500 text-red-200'
-                              : q.difficulty === 'MEDIUM'
-                                ? 'bg-yellow-600/30 border-yellow-500 text-yellow-200'
-                                : 'bg-green-600/30 border-green-500 text-green-200'
+                            ? 'bg-red-600/30 border-red-500 text-red-200'
+                            : q.difficulty === 'MEDIUM'
+                              ? 'bg-yellow-600/30 border-yellow-500 text-yellow-200'
+                              : 'bg-green-600/30 border-green-500 text-green-200'
                             }`}
                         >
                           {q.difficulty}
