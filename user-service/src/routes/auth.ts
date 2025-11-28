@@ -5,6 +5,7 @@ import { generateAccessToken } from '../utils/jwt';
 import { createRefreshToken, deleteRefreshToken, validateRefreshToken } from '../utils/refreshToken';
 import { JWT_REFRESH_EXPIRES_DAYS } from "../config/constants";
 import { prisma } from "../db/prisma";
+import { UserRole } from "shared";
 
 const router = Router();
 
@@ -71,7 +72,7 @@ router.post('/refresh', async (req, res) => {
             select: { role: true }
         });
 
-        const accessToken = generateAccessToken(userId, role);
+        const accessToken = generateAccessToken(userId, role as UserRole);
 
         res.json({
             accessToken

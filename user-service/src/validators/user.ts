@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { UserRole } from '@prisma/client';
+import { UserRole } from 'shared';
 
 export const updateMeSchema = z.object({
     displayName: z.string().min(1, 'Display name cannot be empty').max(50).optional(),

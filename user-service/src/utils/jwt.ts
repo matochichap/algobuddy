@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { UserRole } from '@prisma/client';
+import { UserRole } from 'shared';
 import { JWT_ACCESS_EXPIRES_IN, JWT_ACCESS_SECRET } from '../config/constants';
 import { JwtPayload } from 'shared';
 

@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from "express";
 import { prisma } from "../db/prisma";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "shared";
 import { validate } from "../middleware/validate";
 import { AuthRequest } from "shared";
 import { deleteRefreshToken } from "../utils/refreshToken";
