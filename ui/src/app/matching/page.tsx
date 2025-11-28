@@ -55,10 +55,11 @@ export default function MatchingPage() {
             // Connect to matching service through API Gateway
             const socket = io(process.env.NEXT_PUBLIC_MATCHING_SERVICE_BASE_URL, {
                 path: '/socket/matching',
-                auth: {
+                query: {
                     token: accessToken
                 },
                 transports: ['websocket'],
+                reconnection: false,
             });
             socketRef.current = socket;
 
@@ -99,7 +100,7 @@ export default function MatchingPage() {
             });
 
             socket.on('connect_error', (error) => {
-                console.error('Socket.io connection error:', error);
+                console.warn('Socket.io connection error:', error);
                 setError(`Connection error: ${error.message}`);
                 setIsMatching(false);
             });

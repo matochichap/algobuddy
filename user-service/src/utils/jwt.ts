@@ -1,13 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { UserRole } from '@prisma/client';
 import { JWT_ACCESS_EXPIRES_IN, JWT_ACCESS_SECRET } from '../config/constants';
-
-export interface JWTPayload {
-    userId: string;
-    userRole?: UserRole;
-    iat?: number;
-    exp?: number;
-}
+import { JwtPayload } from 'shared';
 
 /**
  * Generate an access token
@@ -17,7 +11,7 @@ export interface JWTPayload {
  */
 export function generateAccessToken(userId: string, userRole: UserRole) {
     return jwt.sign(
-        { userId, userRole } as JWTPayload,
+        { userId, userRole } as JwtPayload,
         JWT_ACCESS_SECRET,
         { expiresIn: JWT_ACCESS_EXPIRES_IN, algorithm: 'HS256' } as any
     );

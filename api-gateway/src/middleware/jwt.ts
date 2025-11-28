@@ -1,6 +1,6 @@
 import { expressjwt } from 'express-jwt';
 import type { Response, NextFunction, RequestHandler } from 'express';
-import { UserRoleType, JwtRequest } from 'shared';
+import { JwtRequest, UserRole } from 'shared';
 
 /**
  * Middleware to verify JWT access token from Authorization header
@@ -18,7 +18,7 @@ export const verifyAccessToken: RequestHandler = expressjwt({
  * @param roles 
  * @returns 
  */
-export const authorizedRoles = (roles: UserRoleType[]): RequestHandler => {
+export const authorizedRoles = (roles: UserRole[]): RequestHandler => {
     return (req: JwtRequest, res, next) => {
         const userRole = req.auth?.userRole;
         if (!userRole || !roles.includes(userRole)) {

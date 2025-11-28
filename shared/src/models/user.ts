@@ -1,10 +1,10 @@
 // NOTE: keep in sync with @prisma/client UserRole enum
-export enum UserRole {
-    USER = 'USER',
-    ADMIN = 'ADMIN'
-}
+export const UserRole = {
+    USER: "USER",
+    ADMIN: "ADMIN",
+} as const;
 
-export type UserRoleType = 'USER' | 'ADMIN';
+export type UserRole = typeof UserRole[keyof typeof UserRole];
 
 export interface User {
     id: string;
@@ -14,7 +14,7 @@ export interface User {
     lastName?: string;
     picture?: string;
     email?: string;
-    role?: UserRoleType;
+    role?: UserRole;
     lastLogin?: Date;
     createdAt?: Date;
     lastUpdated?: Date;

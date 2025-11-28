@@ -1,14 +1,7 @@
-import jwt from "jsonwebtoken";
-import crypto from "crypto"
+import crypto from "crypto";
 import { Server, Socket } from "socket.io";
-import { cleanupExpired } from "./redis";
+import { cleanupExpired } from "../db/redis";
 import { MatchedUserInfo } from "shared";
-
-// TODO: implement on API Gateway
-interface JwtPayload {
-    userId: string;
-    userRole: string;
-}
 
 const socketClients = new Map<string, Socket>();
 
@@ -21,32 +14,12 @@ function attachWebsocketServer(server: any) {
         },
     });
 
-    io.use((socket, next) => {
-        const token = socket.handshake.auth.token;
-        if (!token) {
-            return next(new Error("Missing token"));
-        }
-
-        try {
-            const { userId, userRole } = jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as JwtPayload;
-            if (userId) {
-                if (socketClients.has(userId)) {
-                    return next(new Error("User already connected"));
-                }
-                socket.data.userId = userId;
-                socket.data.userRole = userRole;
-                console.log("Authenticated user:", { userId, userRole });
-                next();
-            } else {
-                return next(new Error("Invalid token payload"));
-            }
-        } catch (err) {
-            return next(new Error("Invalid or expired token"));
-        }
-    });
-
     io.on("connection", (socket: Socket) => {
-        const userId = socket.data.userId;
+        const userId = socket.handshake.headers['x-user-id'] as string;
+        if (socketClients.has(userId)) {
+            closeWsConnection(userId, "User already connected");
+            return;
+        }
         socketClients.set(userId, socket);
         console.log(`Client connected: ${userId}`);
 

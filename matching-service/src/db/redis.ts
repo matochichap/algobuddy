@@ -1,9 +1,8 @@
 import Redis from "ioredis";
-import { closeWsConnection } from "./websocket";
+import { closeWsConnection } from "../config/websocket";
 import { normalise } from "../utils/match";
-import { MATCH_TTL } from "../constants/match";
 import { MatchedUserInfo } from "shared";
-import { allDifficulties, allTopics, allLanguages } from "../constants/question";
+import { allDifficulties, allTopics, allLanguages, MATCH_TTL } from "../config/constants";
 
 const redis = new Redis({
     host: process.env.REDIS_HOST!,

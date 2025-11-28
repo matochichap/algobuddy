@@ -1,5 +1,5 @@
 import express from "express";
-import { enqueueUser, dequeueUsers } from "../config/redis";
+import { enqueueUser, dequeueUsers } from "../db/redis";
 import { MatchedUserInfo } from "shared";
 import { notifyMatch } from "../config/websocket";
 import { Difficulty, Topic, Language } from "shared";

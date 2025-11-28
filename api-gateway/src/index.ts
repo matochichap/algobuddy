@@ -6,7 +6,8 @@ dotenv.config({ path: path.resolve(__dirname, "../.env"), override: true });
 import http from "http";
 import net from "net";
 import app from "./server";
-import { wsMatchingProxy, wsCollaborationProxy } from "./server";
+import { wsMatchingProxy } from "./routes/match";
+import { wsCollaborationProxy } from "./routes/collaboration";
 
 const PORT = process.env.API_GATEWAY_PORT;
 const server = http.createServer(app);

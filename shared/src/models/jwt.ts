@@ -1,5 +1,12 @@
 import { Request } from 'express';
-import { UserRoleType } from '../models/user';
+import { UserRole } from '../models/user';
+
+export interface JwtPayload {
+    userId: string;
+    userRole?: UserRole;
+    iat?: number;
+    exp?: number;
+}
 
 /**
  * Extended Request interface to include auth property after using verifyAccessToken middleware
@@ -7,7 +14,7 @@ import { UserRoleType } from '../models/user';
 export interface JwtRequest extends Request {
     auth?: {
         userId: string;
-        userRole: UserRoleType;
+        userRole: UserRole;
         iat: number;
         exp: number;
     };

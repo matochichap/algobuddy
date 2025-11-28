@@ -1,4 +1,18 @@
 import { createProxyMiddleware, fixRequestBody } from "http-proxy-middleware";
+import { JwtPayload } from "shared";
+import jwt from "jsonwebtoken";
+
+
+/**
+ * Verify and extract JWT access token from WebSocket URL
+ * @param url 
+ * @returns 
+ */
+const verifyAccessTokenWs = (url: URL) => {
+    const token = url.searchParams.get('token')!;
+    const { userId, userRole } = jwt.verify(token, process.env.JWT_ACCESS_SECRET!) as JwtPayload;
+    return { userId, userRole };
+}
 
 export function httpProxy(targetUrl: string, route?: string) {
     return createProxyMiddleware({
@@ -38,22 +52,22 @@ export function wsProxy(target: string, route: string) {
         target: target,
         changeOrigin: true,
         ws: true,
-        pathFilter: (pathname, req) => {
+        pathFilter: (pathname) => {
             return pathname.startsWith(route);
         },
-        pathRewrite: (path, req) => {
-            return path;
-        },
         on: {
-            proxyReq: (proxyReq, req, res) => {
-                console.log(`[Proxy] ${req.method} ${req.url} -> ${target}`);
-                console.log(`[Proxy] Full target URL: ${proxyReq.protocol}//${proxyReq.host}${proxyReq.path}`);
-            },
             proxyReqWs: (proxyReq, req, socket, options, head) => {
-                console.log(`[WebSocket] Upgrading ${req.url}`);
-                console.log(`[WebSocket] Target:`, options.target);
-                console.log(`[WebSocket] ProxyReq path: ${proxyReq.path}`);
-                console.log(`[WebSocket] ProxyReq host: ${proxyReq.getHeader('host')}`);
+                try {
+                    const url = new URL(req.url!, `http://${req.headers.host}`);
+                    const { userId, userRole } = verifyAccessTokenWs(url);
+                    console.log(`WS Proxy authenticated user: `, { userId, userRole });
+                    proxyReq.setHeader('x-user-id', userId);
+                    proxyReq.setHeader('x-user-role', userRole!);
+                } catch (err) {
+                    console.error("JWT error in WS proxy: ", err);
+                    socket.destroy();
+                    return;
+                }
             },
             error: (err, req, res) => {
                 console.error(`[Proxy Error] ${req.url}:`, err.message);
