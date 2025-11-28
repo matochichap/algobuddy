@@ -1,20 +1,11 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-
-export interface MatchInfo {
-    userId: string;
-    displayName: string;
-    email?: string;
-    picture?: string;
-    difficulty: string;
-    topic: string;
-    language: string;
-}
+import { MatchedUserInfo } from 'shared';
 
 interface MatchContextType {
-    matchedUser: MatchInfo | null;
-    setMatchedUser: (user: MatchInfo) => void;
+    matchedUser: MatchedUserInfo | null;
+    setMatchedUser: (user: MatchedUserInfo) => void;
     clearMatchedUser: () => void;
     clearSessionStorage: () => void;
 }
@@ -24,7 +15,7 @@ const MatchContext = createContext<MatchContextType | undefined>(undefined);
 const MATCH_STORAGE_KEY = 'matchInfo';
 
 export function MatchProvider({ children }: { children: ReactNode }) {
-    const [matchedUser, setMatchedUserState] = useState<MatchInfo | null>(null);
+    const [matchedUser, setMatchedUserState] = useState<MatchedUserInfo | null>(null);
     const [isInitialized, setIsInitialized] = useState(false);
 
     // Load from sessionStorage on mount
@@ -42,7 +33,7 @@ export function MatchProvider({ children }: { children: ReactNode }) {
         setIsInitialized(true);
     }, []);
 
-    const setMatchedUser = (user: MatchInfo) => {
+    const setMatchedUser = (user: MatchedUserInfo) => {
         setMatchedUserState(user);
         sessionStorage.setItem(MATCH_STORAGE_KEY, JSON.stringify(user));
     };

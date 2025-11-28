@@ -10,6 +10,7 @@ import Spinner from "@/components/Spinner";
 import Header from "@/components/Header";
 import { difficulty as d, topic as t, language as l } from "@/constants/question";
 import { io, Socket } from "socket.io-client";
+import { MatchedUserInfo } from "shared";
 
 const Difficulty = { ...d, ANY: 'Any' };
 const Topic = { ...t, ANY: 'Any' };
@@ -63,17 +64,19 @@ export default function MatchingPage() {
 
             socket.on('connect', async () => {
                 try {
+                    const userInfo: MatchedUserInfo = {
+                        userId: user.id,
+                        displayName: user.displayName!,
+                        email: user.email,
+                        picture: user.picture,
+                        difficulty: difficulty,
+                        topic: topic,
+                        language: language,
+                    };
+
                     const response = await authFetch(`${process.env.NEXT_PUBLIC_MATCHING_SERVICE_BASE_URL}/api/match/start`, {
                         method: 'POST',
-                        body: JSON.stringify({
-                            userId: user.id,
-                            displayName: user.displayName,
-                            email: user.email,
-                            picture: user.picture,
-                            difficulty: difficulty,
-                            topic: topic,
-                            language: language,
-                        })
+                        body: JSON.stringify(userInfo)
                     });
 
                     if (!response.ok) {
@@ -90,16 +93,8 @@ export default function MatchingPage() {
                 }
             });
 
-            socket.on('match_found', (data) => {
-                setMatchedUser({
-                    userId: data.userId,
-                    displayName: data.displayName,
-                    email: data.email,
-                    picture: data.picture,
-                    difficulty: data.difficulty,
-                    topic: data.topic,
-                    language: data.language,
-                });
+            socket.on('match_found', (data: MatchedUserInfo) => {
+                setMatchedUser(data);
                 setIsMatching(false);
             });
 

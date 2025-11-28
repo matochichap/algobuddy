@@ -1,28 +1,18 @@
 import express from "express";
 import { enqueueUser, dequeueUsers } from "../config/redis";
-import { UserMatchInfo } from "../constants/match";
+import { MatchedUserInfo } from "shared";
 import { notifyMatch } from "../config/websocket";
-import { Difficulty, Topic, Language } from "../constants/question";
+import { Difficulty, Topic, Language } from "shared";
 import { resolveMatchedValue } from "../utils/match";
 
 const router = express.Router();
 
 router.post("/start", async (req, res) => {
-    const { userId, displayName, email, picture, difficulty, topic, language } = req.body;
+    const userInfo = req.body as MatchedUserInfo;
     try {
         (async () => {
-            const userInfo: UserMatchInfo = {
-                userId,
-                displayName,
-                email,
-                picture,
-                difficulty,
-                topic,
-                language
-            };
-
             await enqueueUser(userInfo);
-            const pairs = await dequeueUsers(difficulty, topic, language);
+            const pairs = await dequeueUsers(userInfo.difficulty, userInfo.topic, userInfo.language);
             for (const [user1Info, user2Info] of pairs) {
                 const matchedDifficulty = resolveMatchedValue(user1Info.difficulty, user2Info.difficulty, Difficulty);
                 const matchedTopic = resolveMatchedValue(user1Info.topic, user2Info.topic, Topic);

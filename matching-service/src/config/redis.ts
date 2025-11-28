@@ -1,7 +1,8 @@
 import Redis from "ioredis";
 import { closeWsConnection } from "./websocket";
 import { normalise } from "../utils/match";
-import { UserMatchInfo, MATCH_TTL } from "../constants/match";
+import { MATCH_TTL } from "../constants/match";
+import { MatchedUserInfo } from "shared";
 import { allDifficulties, allTopics, allLanguages } from "../constants/question";
 
 const redis = new Redis({
@@ -84,7 +85,7 @@ async function cleanupExpired(expireUserId: string) {
     }
 }
 
-async function enqueueUser(userInfo: UserMatchInfo) {
+async function enqueueUser(userInfo: MatchedUserInfo) {
     // queue key format: queue:<difficulty>:<topic>:<language>
     const queueKey = getQueueKey(userInfo.difficulty, userInfo.topic, userInfo.language);
     // user key format: user:<userId>
@@ -101,7 +102,7 @@ async function enqueueUser(userInfo: UserMatchInfo) {
         .exec();
 }
 
-async function dequeueUsers(difficulty: string, topic: string, language: string): Promise<[UserMatchInfo, UserMatchInfo][]> {
+async function dequeueUsers(difficulty: string, topic: string, language: string): Promise<[MatchedUserInfo, MatchedUserInfo][]> {
     // Get all users in the exact matching queue
     const criterionList = [...await redis.zrange(getQueueKey(difficulty, topic, language), 0, -1)];
 
@@ -124,7 +125,7 @@ async function dequeueUsers(difficulty: string, topic: string, language: string)
         .map(entry => entry[0]);
 
     // Try to pair users from criterionList with users from candidateList
-    const pairs: [UserMatchInfo, UserMatchInfo][] = [];
+    const pairs: [MatchedUserInfo, MatchedUserInfo][] = [];
     for (let i = 0; i < criterionList.length; i++) {
         let userId1: string;
         let userId2: string;
@@ -149,8 +150,8 @@ async function dequeueUsers(difficulty: string, topic: string, language: string)
             continue;
         }
 
-        const user1 = JSON.parse(userInfo1) as UserMatchInfo;
-        const user2 = JSON.parse(userInfo2) as UserMatchInfo;
+        const user1 = JSON.parse(userInfo1) as MatchedUserInfo;
+        const user2 = JSON.parse(userInfo2) as MatchedUserInfo;
 
         await Promise.all([
             redis.zrem(getQueueKey(user1.difficulty, user1.topic, user1.language), user1.userId),

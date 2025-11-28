@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
+import crypto from "crypto"
 import { Server, Socket } from "socket.io";
 import { cleanupExpired } from "./redis";
-import { UserMatchInfo } from "../constants/match";
+import { MatchedUserInfo } from "shared";
 
+// TODO: implement on API Gateway
 interface JwtPayload {
     userId: string;
     userRole: string;
@@ -56,8 +58,9 @@ function attachWebsocketServer(server: any) {
     });
 }
 
-function notifyMatch(user1Info: UserMatchInfo, user2Info: UserMatchInfo, matchedDifficulty: string, matchedTopic: string, matchedLanguage: string) {
-    socketClients.get(user1Info.userId)?.emit("match_found", {
+function notifyMatch(user1Info: MatchedUserInfo, user2Info: MatchedUserInfo, matchedDifficulty: string, matchedTopic: string, matchedLanguage: string) {
+    const questionSeed = crypto.randomBytes(8).toString('hex');
+    const user1MatchedUserInfo: MatchedUserInfo = {
         userId: user2Info.userId,
         displayName: user2Info.displayName,
         email: user2Info.email,
@@ -65,9 +68,10 @@ function notifyMatch(user1Info: UserMatchInfo, user2Info: UserMatchInfo, matched
         difficulty: matchedDifficulty,
         topic: matchedTopic,
         language: matchedLanguage,
-    });
+        questionSeed,
+    }
 
-    socketClients.get(user2Info.userId)?.emit("match_found", {
+    const user2MatchedUserInfo: MatchedUserInfo = {
         userId: user1Info.userId,
         displayName: user1Info.displayName,
         email: user1Info.email,
@@ -75,8 +79,11 @@ function notifyMatch(user1Info: UserMatchInfo, user2Info: UserMatchInfo, matched
         difficulty: matchedDifficulty,
         topic: matchedTopic,
         language: matchedLanguage,
-    });
+        questionSeed,
+    }
 
+    socketClients.get(user1Info.userId)?.emit("match_found", user1MatchedUserInfo);
+    socketClients.get(user2Info.userId)?.emit("match_found", user2MatchedUserInfo);
     closeWsConnection(user1Info.userId, "Match found");
     closeWsConnection(user2Info.userId, "Match found");
 }
