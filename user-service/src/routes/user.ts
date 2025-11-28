@@ -100,7 +100,7 @@ router.put('/:id', validate({ params: idParamSchema, body: adminUpdateUserSchema
         if (role) data.role = role; // Don't set role if not provided
 
         const user = await prisma.user.update({
-            where: { google_id: (req as any).validatedParams.id },
+            where: { id: (req as any).validatedParams.id },
             data
         });
         res.json(user);
@@ -116,7 +116,7 @@ router.delete('/:id', async (req, res) => {
 
         // Delete user
         await prisma.user.delete({
-            where: { google_id: req.params.id },
+            where: { id: req.params.id },
         });
         res.json({ message: "User deleted successfully" });
     } catch (err) {

@@ -57,8 +57,8 @@ export default function AdminUsersPage() {
         setBusy(true);
         setError(null);
         try {
-            const { google_id, displayName, firstName, lastName, picture, email, role } = editing as User & { role?: User['role'] };
-            const res = await authFetch(`${process.env.NEXT_PUBLIC_USER_SERVICE_BASE_URL}/api/user/${encodeURIComponent(google_id)}`, {
+            const { id, displayName, firstName, lastName, picture, email, role } = editing as User & { role?: User['role'] };
+            const res = await authFetch(`${process.env.NEXT_PUBLIC_USER_SERVICE_BASE_URL}/api/user/${encodeURIComponent(id)}`, {
                 method: 'PUT',
                 body: JSON.stringify({ displayName, firstName, lastName, picture, email, role })
             });
@@ -85,14 +85,14 @@ export default function AdminUsersPage() {
         setBusy(true);
         setError(null);
         try {
-            const res = await authFetch(`${process.env.NEXT_PUBLIC_USER_SERVICE_BASE_URL}/api/user/${encodeURIComponent(selected.google_id)}`, {
+            const res = await authFetch(`${process.env.NEXT_PUBLIC_USER_SERVICE_BASE_URL}/api/user/${encodeURIComponent(selected.id)}`, {
                 method: 'DELETE'
             });
             if (!res.ok) {
                 const text = await res.text();
                 throw new Error(text || 'Delete failed');
             }
-            setResults(prev => prev.filter(u => u.google_id !== selected.google_id));
+            setResults(prev => prev.filter(u => u.id !== selected.id));
             setSelected(null);
             setEditing(null);
             setQuery('');
