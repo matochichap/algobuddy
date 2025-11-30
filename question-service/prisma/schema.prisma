@@ -34,6 +34,5 @@ model Question {
   topics      Topic[]
   createdAt   DateTime     @default(now())
 
-  @@index([difficulty])
-  @@index([topics])
+  @@index([difficulty, topics])
 }

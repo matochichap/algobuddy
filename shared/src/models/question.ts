@@ -2,27 +2,27 @@ interface Question {
     id: string;
     title: string;
     description: string;
-    //image?: ;
-    //testCases?: string[];
+    difficulty: Difficulty;
+    topics: Topic[];
 }
 
 enum Difficulty {
-    EASY = 'Easy',
-    MEDIUM = 'Medium',
-    HARD = 'Hard'
+    EASY = 'EASY',
+    MEDIUM = 'MEDIUM',
+    HARD = 'HARD'
 }
 
 enum Topic {
-    ARRAY = 'Array',
-    STRING = 'String',
-    HASH_TABLE = 'Hash Table',
-    MATH = 'Math',
-    GREEDY = 'Greedy',
-    GRAPH = 'Graph',
-    TREE = 'Tree',
-    DYNAMIC_PROGRAMMING = 'Dynamic Programming',
-    RECURSION = 'Recursion',
-    BACKTRACKING = 'Backtracking'
+    ARRAY = 'ARRAY',
+    STRING = 'STRING',
+    HASH_TABLE = 'HASH_TABLE',
+    MATH = 'MATH',
+    GREEDY = 'GREEDY',
+    GRAPH = 'GRAPH',
+    TREE = 'TREE',
+    DYNAMIC_PROGRAMMING = 'DYNAMIC_PROGRAMMING',
+    RECURSION = 'RECURSION',
+    BACKTRACKING = 'BACKTRACKING'
 }
 
 enum Language {

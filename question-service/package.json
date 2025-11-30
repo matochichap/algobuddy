@@ -15,7 +15,8 @@
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "prisma": "^6.17.1",
-    "shared": "file:../shared"
+    "shared": "file:../shared",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
