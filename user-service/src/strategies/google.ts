@@ -27,14 +27,18 @@ passport.use(new Strategy({
         let user = await prisma.user.findUnique({ where: { google_id: profile._json.sub } });
 
         if (!user) {
+            if (!profile._json.sub) {
+                return done(new Error("Google profile is missing 'sub' field"), undefined);
+            }
+
             user = await prisma.user.create({
                 data: {
                     google_id: profile._json.sub,
-                    displayName: profile._json.name,
-                    firstName: profile._json.given_name,
-                    lastName: profile._json.family_name,
-                    picture: profile._json.picture,
-                    email: profile._json.email,
+                    displayName: profile._json.name || "",
+                    firstName: profile._json.given_name || "",
+                    lastName: profile._json.family_name || "",
+                    picture: profile._json.picture || "",
+                    email: profile._json.email || "",
                     lastLogin: new Date()
                 }
             });
