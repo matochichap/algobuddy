@@ -6,7 +6,6 @@ import { UserRole } from "shared";
 const router = Router();
 const QUESTION_SERVICE_URL = process.env.QUESTION_SERVICE_BASE_URL!;
 
-// role-based access per method to avoid overlapping since user and admin have same route paths /api/question
 router.get(
   "/api/question",
   verifyAccessToken,
@@ -19,22 +18,6 @@ router.post(
   "/api/question",
   verifyAccessToken,
   authorizedRoles([UserRole.ADMIN]),
-  attachUserFromJwt,
-  httpProxy(QUESTION_SERVICE_URL)
-);
-
-router.get(
-  "/api/question/random",
-  verifyAccessToken,
-  authorizedRoles([UserRole.USER, UserRole.ADMIN]),
-  attachUserFromJwt,
-  httpProxy(QUESTION_SERVICE_URL)
-);
-
-router.get(
-  "/api/question/:id",
-  verifyAccessToken,
-  authorizedRoles([UserRole.USER, UserRole.ADMIN]),
   attachUserFromJwt,
   httpProxy(QUESTION_SERVICE_URL)
 );
