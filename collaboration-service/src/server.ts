@@ -1,8 +1,7 @@
 import express from "express";
 import cors from "cors";
 import http from "http";
-import roomSetupRouter from "./routes/roomSetup";
-import { initializeSocketServer } from "./sockets/socketServer";
+import { attachWebsocketServer } from "./config/websocket";
 
 const app = express();
 app.use(express.json());
@@ -11,10 +10,9 @@ app.use(cors({
     credentials: true,
 }))
 
-app.use("/api/roomSetup", roomSetupRouter)
 app.get("/", (req, res) => res.send("Collaboration Service is running!"));
 
 const server = http.createServer(app);
-initializeSocketServer(server);
+attachWebsocketServer(server);
 
 export default server;

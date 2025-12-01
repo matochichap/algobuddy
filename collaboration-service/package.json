@@ -12,6 +12,7 @@
   "dependencies": {
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "ioredis": "^5.8.2",
     "jsonwebtoken": "^9.0.2",
     "shared": "file:../shared",
     "socket.io": "^4.8.1",

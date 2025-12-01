@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "shared": "yarn --cwd ../shared install && yarn --cwd ../shared build && yarn add file:../shared --force",
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build --turbopack",
     "start": "next start",
     "lint": "eslint"

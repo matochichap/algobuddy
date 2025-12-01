@@ -8,9 +8,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Spinner from "@/components/Spinner";
 import Header from "@/components/Header";
-import { difficulty as d, topic as t, language as l } from "@/constants/question";
 import { io, Socket } from "socket.io-client";
-import { MatchedUserInfo } from "shared";
+import { MatchedUserInfo, Difficulty as d, Topic as t, Language as l } from "shared";
 
 const Difficulty = { ...d, ANY: 'Any' };
 const Topic = { ...t, ANY: 'Any' };
@@ -134,14 +133,7 @@ export default function MatchingPage() {
     };
 
     const handleJoinRoom = async () => {
-        if (!user || !matchedUser || !accessToken) {
-            setError('Please log in to start matching');
-            return;
-        }
-
-        console.log(`[Matching Page] ${user?.displayName} clicked Join Room`);
-        const roomId = [user.id, matchedUser.userId].sort().join("_");
-        router.push(`/collaboration?roomId=${roomId}`);
+        router.push(`/collaboration`);
     };
 
     if (isMatching) {
@@ -258,7 +250,7 @@ export default function MatchingPage() {
                         </label>
                         <select
                             value={difficulty}
-                            onChange={(e) => setDifficulty(e.target.value)}
+                            onChange={(e) => setDifficulty(e.target.value as d)}
                             className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             {Object.values(Difficulty).map((d) => (
@@ -275,7 +267,7 @@ export default function MatchingPage() {
                         </label>
                         <select
                             value={topic}
-                            onChange={(e) => setTopic(e.target.value)}
+                            onChange={(e) => setTopic(e.target.value as t)}
                             className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             {Object.values(Topic).map((t) => (
@@ -292,7 +284,7 @@ export default function MatchingPage() {
                         </label>
                         <select
                             value={language}
-                            onChange={(e) => setLanguage(e.target.value)}
+                            onChange={(e) => setLanguage(e.target.value as l)}
                             className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
                             {Object.values(Language).map((lang) => (
