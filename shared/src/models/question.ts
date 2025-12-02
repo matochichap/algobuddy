@@ -26,13 +26,13 @@ enum Topic {
 }
 
 enum Language {
-    PYTHON = 'Python',
-    JAVASCRIPT = 'JavaScript',
-    JAVA = 'Java',
-    CPP = 'C++',
-    CSHARP = 'C#',
-    GO = 'Go',
-    RUBY = 'Ruby'
+    PYTHON = 'PYTHON',
+    JAVASCRIPT = 'JAVASCRIPT',
+    JAVA = 'JAVA',
+    CPP = 'CPP',
+    CSHARP = 'CSHARP',
+    GO = 'GO',
+    RUBY = 'RUBY'
 }
 
 export { Question, Difficulty, Topic, Language };

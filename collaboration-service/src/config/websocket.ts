@@ -24,7 +24,7 @@ function attachWebsocketServer(server: any) {
         socketClients.set(userId, socket);
         console.log(`Client connected: ${userId}`);
 
-        // join room
+        // join room and ydoc setup
         const { matchedUserId, difficulty, topic, language } = socket.handshake.query as {
             matchedUserId: string;
             difficulty: string;
@@ -44,6 +44,11 @@ function attachWebsocketServer(server: any) {
         socket.on("yjs-update", (update: Uint8Array) => {
             Y.applyUpdate(doc, update);
             socket.to(roomId).emit("yjs-update", update);
+        });
+
+        // chat setup
+        socket.on("chat", (message: string) => {
+            io.to(roomId).emit("chat", message);
         });
 
         socket.on("disconnect", () => {

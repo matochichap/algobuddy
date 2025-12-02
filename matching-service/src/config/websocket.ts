@@ -32,7 +32,7 @@ function attachWebsocketServer(server: any) {
 }
 
 function notifyMatch(user1Info: MatchedUserInfo, user2Info: MatchedUserInfo, matchedDifficulty: string, matchedTopic: string, matchedLanguage: string) {
-    const questionSeed = crypto.randomBytes(8).toString('hex');
+    const questionSeed = crypto.randomBytes(4).readUInt32BE(0).toString();
     const user1MatchedUserInfo: MatchedUserInfo = {
         userId: user2Info.userId,
         displayName: user2Info.displayName,

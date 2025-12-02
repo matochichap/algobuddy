@@ -11,9 +11,9 @@ import Header from "@/components/Header";
 import { io, Socket } from "socket.io-client";
 import { MatchedUserInfo, Difficulty as d, Topic as t, Language as l } from "shared";
 
-const Difficulty = { ...d, ANY: 'Any' };
-const Topic = { ...t, ANY: 'Any' };
-const Language = { ...l, ANY: 'Any' };
+const Difficulty = { ...d, ANY: 'ANY' };
+const Topic = { ...t, ANY: 'ANY' };
+const Language = { ...l, ANY: 'ANY' };
 
 export default function MatchingPage() {
     const { user } = useUser();
@@ -287,9 +287,9 @@ export default function MatchingPage() {
                             onChange={(e) => setLanguage(e.target.value as l)}
                             className="w-full px-4 py-3 rounded-lg bg-gray-700 text-white border border-gray-600 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         >
-                            {Object.values(Language).map((lang) => (
-                                <option key={lang} value={lang}>
-                                    {lang}
+                            {Object.values(Language).map((l) => (
+                                <option key={l} value={l}>
+                                    {l}
                                 </option>
                             ))}
                         </select>
