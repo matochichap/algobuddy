@@ -101,7 +101,7 @@ export default function MatchingPage() {
 
             socket.on('connect_error', (error) => {
                 console.warn('Socket.io connection error:', error);
-                setError(`Connection error: ${error.message}`);
+                setError(`Connection error: Try refreshing the page`);
                 setIsMatching(false);
             });
 

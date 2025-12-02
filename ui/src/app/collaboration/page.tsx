@@ -12,13 +12,15 @@ import { Question, Difficulty } from "shared";
 import { useUser } from "@/contexts/UserContext";
 import Link from 'next/link';
 import { getEnumDisplayName, getLanguageDisplayName } from "@/utils/common";
-import { ChatMessage, PistonResponse } from "@/types/collaboration";
+import { ChatMessage, PistonResponse, AvatarInfo } from "@/types/collaboration";
+import Image from "next/image";
 
 export default function CollaborationPage() {
     const [question, setQuestion] = useState<Question | null>(null);
     const [chat, setChat] = useState<ChatMessage[]>([]);
     const [chatInput, setChatInput] = useState<string>("");
     const [output, setOutput] = useState<string>("");
+    const [onlineUsers, setOnlineUsers] = useState<AvatarInfo[]>([]);
     const [isRunning, setIsRunning] = useState<boolean>(false);
     const [ready, setReady] = useState(false);
 
@@ -40,73 +42,75 @@ export default function CollaborationPage() {
         }
     }, [clearMatchedUser, clearSessionStorage, router]);
 
-    const handleSendMessage = () => {
-        if (socketRef.current && chatInput.trim()) {
-            const message: ChatMessage = {
-                sender: user?.displayName || "Unknown",
-                content: chatInput.trim(),
+    const handleSendMessage = useMemo(() => {
+        return () => {
+            if (socketRef.current && chatInput.trim()) {
+                const message: ChatMessage = {
+                    sender: user?.displayName || "Unknown",
+                    content: chatInput.trim(),
+                }
+                socketRef.current.emit("chat", message);
+                setChatInput("");
             }
-            socketRef.current.emit("chat", message);
-            setChatInput("");
         }
-    };
+    }, [chatInput, user]);
 
-    const handleRunCode = async () => {
-        if (!docRef.current || !matchedUser) return;
+    const handleRunCode = useMemo(() => {
+        return async () => {
+            if (!docRef.current || !matchedUser) return;
 
-        const code = docRef.current.getText("code").toString();
-        const language = matchedUser.language.toLowerCase();
+            const code = docRef.current.getText("code").toString();
+            const language = matchedUser.language.toLowerCase();
 
-        if (!language) {
-            setOutput(`Language "${matchedUser.language}" is not supported.`);
-            return;
-        }
-
-        setIsRunning(true);
-        setOutput("Running...");
-
-        console.log("Executing code:", { language, code });
-
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_PISTON_API_BASE_URL}/api/v2/piston/execute`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    language: language,
-                    version: "*",
-                    files: [
-                        {
-                            content: code,
-                        },
-                    ],
-                }),
-            });
-
-            const result: PistonResponse = await response.json();
-
-            let outputText = "";
-            if (result.compile?.stderr) {
-                outputText += `Compile Error:\n${result.compile.stderr}\n`;
-            }
-            if (result.run.stderr) {
-                outputText += `Runtime Error:\n${result.run.stderr}\n`;
-            }
-            if (result.run.stdout) {
-                outputText += result.run.stdout;
-            }
-            if (!outputText) {
-                outputText = "No output";
+            if (!language) {
+                setOutput(`Language "${matchedUser.language}" is not supported.`);
+                return;
             }
 
-            setOutput(outputText);
-        } catch (error) {
-            setOutput(`Error: ${error instanceof Error ? error.message : "Failed to execute code"}`);
-        } finally {
-            setIsRunning(false);
-        }
-    };
+            setIsRunning(true);
+            setOutput("Running...");
+
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_PISTON_API_BASE_URL}/api/v2/piston/execute`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        language: language,
+                        version: "*",
+                        files: [
+                            {
+                                content: code,
+                            },
+                        ],
+                    }),
+                });
+
+                const result: PistonResponse = await response.json();
+
+                let outputText = "";
+                if (result.compile?.stderr) {
+                    outputText += `Compile Error:\n${result.compile.stderr}\n`;
+                }
+                if (result.run.stderr) {
+                    outputText += `Runtime Error:\n${result.run.stderr}\n`;
+                }
+                if (result.run.stdout) {
+                    outputText += result.run.stdout;
+                }
+                if (!outputText) {
+                    outputText = "No output";
+                }
+
+                setOutput(outputText);
+            } catch (error) {
+                setOutput(`Error: ${error instanceof Error ? error.message : "Failed to execute code"}`);
+            } finally {
+                setIsRunning(false);
+            }
+        };
+    }, [matchedUser]);
 
     useEffect(() => {
         if (!accessToken || !matchedUser) {
@@ -136,6 +140,15 @@ export default function CollaborationPage() {
 
         socket.on("chat", (message: ChatMessage) => {
             setChat((prevChat) => [...prevChat, message]);
+        });
+
+        socket.on("online-users", (onlineUserIds: string[]) => {
+            const onlineUsers = onlineUserIds.map(id => {
+                if (id === user?.id) return { displayName: user.displayName, picture: user.picture };
+                if (id === matchedUser.userId) return { displayName: matchedUser.displayName, picture: matchedUser.picture };
+                return null;
+            }).filter(id => id !== null) as AvatarInfo[];
+            setOnlineUsers(onlineUsers);
         });
 
         doc.on("update", (update: Uint8Array) => {
@@ -168,7 +181,7 @@ export default function CollaborationPage() {
             docRef.current = null;
             socketRef.current = null;
         };
-    }, [accessToken, matchedUser, router, authFetch]);
+    }, [accessToken, matchedUser, router, user, authFetch]);
 
     // auto scroll chat
     useEffect(() => {
@@ -191,12 +204,42 @@ export default function CollaborationPage() {
                         <span className="text-xl font-bold text-gray-100">AlgoBuddy</span>
                     </Link>
                 </div>
-                <button
-                    onClick={handleLeaveRoom}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                >
-                    Leave Room
-                </button>
+                <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2">
+                        <div className="flex items-center gap-2">
+                            <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                            <span className="text-sm text-gray-200 font-medium">Online</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {
+                                onlineUsers.map((avatar, idx) => {
+                                    return avatar.picture ? (
+                                        <Image
+                                            key={idx}
+                                            src={avatar.picture}
+                                            alt={avatar.displayName || ""}
+                                            width={32}
+                                            height={32}
+                                            className="w-8 h-8 rounded-full object-cover border border-gray-500 hover:border-gray-400"
+                                        />
+                                    ) : (
+                                        <div key={idx} className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500">
+                                            <span className="text-sm font-medium text-gray-200">
+                                                {avatar.displayName?.charAt(0).toUpperCase() || ""}
+                                            </span>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    </div>
+                    <button
+                        onClick={handleLeaveRoom}
+                        className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                    >
+                        Leave Room
+                    </button>
+                </div>
             </div>
 
             {/* Main Content - Split Panel */}

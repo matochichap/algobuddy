@@ -17,4 +17,9 @@ interface PistonResponse {
     };
 }
 
-export type { ChatMessage, PistonResponse };
+interface AvatarInfo {
+    displayName: string;
+    picture?: string;
+}
+
+export type { ChatMessage, PistonResponse, AvatarInfo };

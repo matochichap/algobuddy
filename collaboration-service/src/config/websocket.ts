@@ -5,6 +5,20 @@ import { addYdoc, getYdoc } from "../db/redis";
 const socketClients = new Map<string, Socket>();
 const docs = new Map<string, Y.Doc>();
 
+function broadcastOnlineUsers(io: Server, userId: string, matchedUserId: string, roomId: string) {
+    // socket ids in room
+    const roomSocketIds = io.sockets.adapter.rooms.get(roomId);
+    if (!roomSocketIds) return;
+    // map socket ids to user ids
+    const onlineUserIds: string[] = Array.from(roomSocketIds).map(socketId => {
+        if (socketClients.get(userId)?.id === socketId) return userId;
+        if (socketClients.get(matchedUserId)?.id === socketId) return matchedUserId;
+        return null;
+    }).filter(id => id !== null);
+    // broadcast online user ids to room
+    io.to(roomId).emit("online-users", onlineUserIds);
+}
+
 function attachWebsocketServer(server: any) {
     const io = new Server(server, {
         path: '/socket/collaboration',
@@ -16,6 +30,7 @@ function attachWebsocketServer(server: any) {
 
     io.on("connection", async (socket: Socket) => {
         const userId = socket.handshake.headers['x-user-id'] as string;
+        socket.data.userId = userId;
         // track connected clients
         if (socketClients.has(userId)) {
             closeWsConnection(userId, "User already connected");
@@ -51,9 +66,13 @@ function attachWebsocketServer(server: any) {
             io.to(roomId).emit("chat", message);
         });
 
+        // online users
+        broadcastOnlineUsers(io, userId, matchedUserId, roomId);
+
         socket.on("disconnect", () => {
             socket.leave(roomId);
             socketClients.delete(userId);
+            broadcastOnlineUsers(io, userId, matchedUserId, roomId);
             console.log(`User ${userId} left room ${roomId}`);
             // room is empty
             if (io.sockets.adapter.rooms.get(roomId) === undefined && docs.has(roomId)) {
