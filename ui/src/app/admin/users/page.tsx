@@ -1,9 +1,10 @@
 'use client';
 import Header from '@/components/Header';
 import { useAuth } from '@/contexts/AuthContext';
-import { User } from 'shared';
+import { User, UserRole } from 'shared';
 import { useState } from 'react';
 import Image from 'next/image';
+import { getEnumDisplayName } from '@/utils/common';
 
 export default function AdminUsersPage() {
     const { authFetch, refreshAccessToken } = useAuth();
@@ -161,7 +162,7 @@ export default function AdminUsersPage() {
                                                     <div className="text-gray-100 font-medium flex items-center gap-2 mb-1">
                                                         <span>{u.displayName || '(no name)'}</span>
                                                         <span className={`text-[10px] px-2 py-0.5 rounded-full border ${u.role === 'ADMIN' ? 'bg-indigo-600/30 border-indigo-500 text-indigo-200' : 'bg-gray-700/50 border-gray-500 text-gray-300'}`}>
-                                                            {u.role || 'USER'}
+                                                            {getEnumDisplayName(u.role || "USER")}
                                                         </span>
                                                     </div>
                                                     {u.email ? <div className="text-xs text-gray-400 break-all">{u.email}</div> : null}
@@ -223,8 +224,11 @@ export default function AdminUsersPage() {
                                                         onChange={(e) => setEditing({ ...editing, role: e.target.value as User['role'] })}
                                                         disabled={busy}
                                                     >
-                                                        <option value="USER">USER</option>
-                                                        <option value="ADMIN">ADMIN</option>
+                                                        {Object.values(UserRole).map((role) => (
+                                                            <option key={role} value={role as User['role']}>
+                                                                {getEnumDisplayName(role as User['role'] || "USER")}
+                                                            </option>
+                                                        ))}
                                                     </select>
                                                 </div>
                                                 <div className="md:col-span-2">

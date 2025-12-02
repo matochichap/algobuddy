@@ -4,7 +4,6 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Question, Topic, Difficulty } from 'shared';
 import { useState } from 'react';
 import { getEnumDisplayName } from '@/utils/common';
-import { get } from 'http';
 
 export default function AdminQuestionsPage() {
   const { authFetch, refreshAccessToken } = useAuth();

@@ -10,6 +10,7 @@ import Spinner from "@/components/Spinner";
 import Header from "@/components/Header";
 import { io, Socket } from "socket.io-client";
 import { MatchedUserInfo, Difficulty as d, Topic as t, Language as l } from "shared";
+import { getEnumDisplayName, getLanguageDisplayName } from "@/utils/common";
 
 const Difficulty = { ...d, ANY: 'ANY' };
 const Topic = { ...t, ANY: 'ANY' };
@@ -190,15 +191,15 @@ export default function MatchingPage() {
                                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-center">
                                     <div>
                                         <p className="text-gray-400 text-sm">Difficulty</p>
-                                        <p className="text-white font-medium">{matchedUser.difficulty}</p>
+                                        <p className="text-white font-medium">{getEnumDisplayName(matchedUser.difficulty)}</p>
                                     </div>
                                     <div>
                                         <p className="text-gray-400 text-sm">Topic</p>
-                                        <p className="text-white font-medium">{matchedUser.topic}</p>
+                                        <p className="text-white font-medium">{getEnumDisplayName(matchedUser.topic)}</p>
                                     </div>
                                     <div>
                                         <p className="text-gray-400 text-sm">Language</p>
-                                        <p className="text-white font-medium">{matchedUser.language}</p>
+                                        <p className="text-white font-medium">{getLanguageDisplayName(matchedUser.language)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -255,7 +256,7 @@ export default function MatchingPage() {
                         >
                             {Object.values(Difficulty).map((d) => (
                                 <option key={d} value={d}>
-                                    {d}
+                                    {getEnumDisplayName(d)}
                                 </option>
                             ))}
                         </select>
@@ -272,7 +273,7 @@ export default function MatchingPage() {
                         >
                             {Object.values(Topic).map((t) => (
                                 <option key={t} value={t}>
-                                    {t}
+                                    {getEnumDisplayName(t)}
                                 </option>
                             ))}
                         </select>
@@ -289,7 +290,7 @@ export default function MatchingPage() {
                         >
                             {Object.values(Language).map((l) => (
                                 <option key={l} value={l}>
-                                    {l}
+                                    {getLanguageDisplayName(l)}
                                 </option>
                             ))}
                         </select>
