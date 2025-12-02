@@ -1,5 +1,6 @@
 import { Server, Socket } from "socket.io";
 import * as Y from "yjs";
+import { addYdoc, getYdoc } from "../db/redis";
 
 const socketClients = new Map<string, Socket>();
 const docs = new Map<string, Y.Doc>();
@@ -13,7 +14,7 @@ function attachWebsocketServer(server: any) {
         },
     });
 
-    io.on("connection", (socket: Socket) => {
+    io.on("connection", async (socket: Socket) => {
         const userId = socket.handshake.headers['x-user-id'] as string;
         // track connected clients
         if (socketClients.has(userId)) {
@@ -24,11 +25,16 @@ function attachWebsocketServer(server: any) {
         console.log(`Client connected: ${userId}`);
 
         // join room
-        const matchedUserId = socket.handshake.query.matchedUserId as string;
+        const { matchedUserId, difficulty, topic, language } = socket.handshake.query as {
+            matchedUserId: string;
+            difficulty: string;
+            topic: string;
+            language: string;
+        };
         const roomId = [userId, matchedUserId].sort().join("_");
 
         if (!docs.has(roomId)) {
-            docs.set(roomId, new Y.Doc());
+            docs.set(roomId, await getYdoc(roomId, difficulty, topic, language));
         }
 
         const doc = docs.get(roomId)!;
@@ -46,6 +52,8 @@ function attachWebsocketServer(server: any) {
             console.log(`User ${userId} left room ${roomId}`);
             // room is empty
             if (io.sockets.adapter.rooms.get(roomId) === undefined && docs.has(roomId)) {
+                // cache doc
+                addYdoc(roomId, difficulty, topic, language, doc);
                 docs.delete(roomId);
                 console.log("Deleted room: ", roomId);
             }

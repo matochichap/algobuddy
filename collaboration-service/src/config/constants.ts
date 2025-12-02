@@ -1,0 +1,1 @@
+export const YDOC_EXPIRATION_TIME = 60 * 5; // 5 minutes

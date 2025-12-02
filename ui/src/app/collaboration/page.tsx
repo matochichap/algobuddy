@@ -35,7 +35,10 @@ export default function CollaborationPage() {
             path: '/socket/collaboration',
             query: {
                 token: accessToken,
-                matchedUserId: matchedUser.userId
+                matchedUserId: matchedUser.userId,
+                difficulty: matchedUser.difficulty,
+                topic: matchedUser.topic,
+                language: matchedUser.language,
             },
             transports: ['websocket'],
         });
