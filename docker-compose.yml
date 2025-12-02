@@ -27,7 +27,6 @@ services:
     image: user-service:latest
     hostname: "user-service"
     env_file:
-      - ./user-service/.env.production.local
       - ./.env.production.local
     networks:
       - algobuddy
@@ -40,7 +39,6 @@ services:
     image: matching-service:latest
     hostname: "matching-service"
     env_file:
-      - ./matching-service/.env.production.local
       - ./.env.production.local
     networks:
       - algobuddy
@@ -53,7 +51,6 @@ services:
     image: question-service:latest
     hostname: "question-service"
     env_file:
-      - ./question-service/.env.production.local
       - ./.env.production.local
     networks:
       - algobuddy
@@ -66,18 +63,6 @@ services:
     image: collaboration-service:latest
     hostname: "collaboration-service"
     env_file:
-      - ./collaboration-service/.env.production.local
-      - ./.env.production.local
-    networks:
-      - algobuddy
-  ai-service:
-    build:
-      context: .
-      dockerfile: ai-service/Dockerfile
-    image: ai-service:latest
-    hostname: "ai-service"
-    env_file:
-      - ./ai-service/.env.production.local
       - ./.env.production.local
     networks:
       - algobuddy

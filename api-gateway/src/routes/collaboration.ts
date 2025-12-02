@@ -1,7 +1,5 @@
 import { Router } from "express";
-import { verifyAccessToken, authorizedRoles, attachUserFromJwt } from "../middleware/jwt";
-import { httpProxy, wsProxy } from "../middleware/proxy";
-import { UserRole } from "shared";
+import { wsProxy } from "../middleware/proxy";
 
 const collaborationRouter = Router();
 const COLLABORATION_SERVICE_URL = process.env.COLLABORATION_SERVICE_BASE_URL!;
