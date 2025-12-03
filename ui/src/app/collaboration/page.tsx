@@ -31,6 +31,11 @@ export default function CollaborationPage() {
     const docRef = useRef<Y.Doc | null>(null);
     const socketRef = useRef<Socket | null>(null);
     const chatEndRef = useRef<HTMLDivElement | null>(null);
+    // const userRef = useRef(user);
+
+    // useEffect(() => {
+    //     userRef.current = user;
+    // }, [user]);
 
     const router = useRouter();
 
@@ -113,73 +118,94 @@ export default function CollaborationPage() {
     }, [matchedUser]);
 
     useEffect(() => {
-        if (!accessToken || !matchedUser) {
-            router.push("/");
-            return;
-        };
+        let isMounted = true;
+        let socket: Socket | null = null;
+        let doc: Y.Doc | null = null;
 
-        // setup websocket connection
-        const socket = io(process.env.NEXT_PUBLIC_COLLABORATION_SERVICE_BASE_URL, {
-            path: '/socket/collaboration',
-            query: {
-                token: accessToken,
-                matchedUserId: matchedUser.userId,
-                difficulty: matchedUser.difficulty,
+        const initialisePage = async () => {
+            if (!accessToken || !matchedUser) {
+                router.push("/");
+                return;
+            };
+
+            // fetch question
+            const params = new URLSearchParams({
                 topic: matchedUser.topic,
-                language: matchedUser.language,
-            },
-            transports: ['websocket'],
-        });
+                difficulty: matchedUser.difficulty,
+                questionSeed: matchedUser.questionSeed!,
+            });
 
-        const doc = new Y.Doc();
+            try {
+                const res = await authFetch(`${process.env.NEXT_PUBLIC_QUESTION_SERVICE_BASE_URL}/api/question?${params}`, {
+                    method: "GET",
+                });
+                const data = await res.json();
+                if (isMounted) setQuestion(data);
+            } catch (err) {
+                console.error("Failed to fetch question:", err);
+            }
 
-        socket.on("yjs-update", (update: ArrayBufferLike) => {
-            // NOTE: Need to convert ArrayBuffer to Uint8Array
-            Y.applyUpdate(doc, new Uint8Array(update));
-        });
+            if (!isMounted) return;
 
-        socket.on("chat", (message: ChatMessage) => {
-            setChat((prevChat) => [...prevChat, message]);
-        });
+            // setup websocket connection
+            socket = io(process.env.NEXT_PUBLIC_COLLABORATION_SERVICE_BASE_URL, {
+                path: '/socket/collaboration',
+                query: {
+                    token: accessToken,
+                    matchedUserId: matchedUser.userId,
+                    difficulty: matchedUser.difficulty,
+                    topic: matchedUser.topic,
+                    language: matchedUser.language,
+                },
+                transports: ['websocket'],
+            });
 
-        socket.on("online-users", (onlineUserIds: string[]) => {
-            const onlineUsers = onlineUserIds.map(id => {
-                if (id === user?.id) return { displayName: user.displayName, picture: user.picture };
-                if (id === matchedUser.userId) return { displayName: matchedUser.displayName, picture: matchedUser.picture };
-                return null;
-            }).filter(id => id !== null) as AvatarInfo[];
-            setOnlineUsers(onlineUsers);
-        });
+            doc = new Y.Doc();
 
-        doc.on("update", (update: Uint8Array) => {
-            socket.emit("yjs-update", update);
-        });
+            socket.on("yjs-update", (update: ArrayBufferLike) => {
+                // NOTE: Need to convert ArrayBuffer to Uint8Array
+                if (doc) Y.applyUpdate(doc, new Uint8Array(update));
+            });
 
-        docRef.current = doc;
-        socketRef.current = socket;
+            socket.on("chat", (message: ChatMessage) => {
+                if (isMounted) setChat((prevChat) => [...prevChat, message]);
+            });
 
-        // fetch question
-        const params = new URLSearchParams({
-            topic: matchedUser.topic,
-            difficulty: matchedUser.difficulty,
-            questionSeed: matchedUser.questionSeed!,
-        });
+            socket.on("online-users", (onlineUserIds: string[]) => {
+                if (!isMounted) return;
+                // const currentUser = userRef.current;
+                const onlineUsers = onlineUserIds.map(id => {
+                    if (id === user?.id) return { displayName: user.displayName, picture: user.picture };
+                    // if (id === currentUser?.id) return { displayName: currentUser.displayName, picture: currentUser.picture };
+                    if (id === matchedUser.userId) return { displayName: matchedUser.displayName, picture: matchedUser.picture };
+                    return null;
+                }).filter(id => id !== null) as AvatarInfo[];
+                setOnlineUsers(onlineUsers);
+            });
 
-        authFetch(`${process.env.NEXT_PUBLIC_QUESTION_SERVICE_BASE_URL}/api/question?${params}`, {
-            method: "GET",
-        })
-            .then(res => res.json())
-            .then(data => setQuestion(data))
-            .catch(err => console.error("Failed to fetch question:", err));
+            doc.on("update", (update: Uint8Array) => {
+                if (socket) socket.emit("yjs-update", update);
+            });
 
-        // finish setup
-        setReady(true);
+            if (isMounted) {
+                docRef.current = doc;
+                socketRef.current = socket;
+                setReady(true);
+            } else {
+                socket.disconnect();
+                doc.destroy();
+            }
+        }
+
+        initialisePage();
 
         return () => {
-            socket.disconnect();
-            doc.destroy();
+            isMounted = false;
+            if (socket) socket.disconnect();
+            if (doc) doc.destroy();
             docRef.current = null;
             socketRef.current = null;
+            setReady(false);
         };
     }, [accessToken, matchedUser, router, user, authFetch]);
 
@@ -354,7 +380,7 @@ export default function CollaborationPage() {
 
                     {/* Code Editor */}
                     <div className="flex-1 relative">
-                        <Editor
+                        {docRef.current && <Editor
                             height="100%"
                             defaultLanguage={matchedUser?.language.toLowerCase()}
                             theme="vs-dark"
@@ -372,7 +398,7 @@ export default function CollaborationPage() {
                                 minimap: { enabled: false },
                                 scrollBeyondLastLine: false,
                             }}
-                        />
+                        />}
                     </div>
 
                     {/* Run Button & Output */}

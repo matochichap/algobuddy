@@ -33,7 +33,8 @@ function attachWebsocketServer(server: any) {
         socket.data.userId = userId;
         // track connected clients
         if (socketClients.has(userId)) {
-            closeWsConnection(userId, "User already connected");
+            socket.emit("disconnect_reason", { reason: "User already connected" });
+            socket.disconnect();
             return;
         }
         socketClients.set(userId, socket);
