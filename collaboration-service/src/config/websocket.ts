@@ -65,6 +65,11 @@ function attachWebsocketServer(server: any) {
             io.to(roomId).emit("chat", message);
         });
 
+        // partner leave room
+        socket.on("leave-room", (partnerDisplayName) => {
+            socket.to(roomId).emit("leave-room", partnerDisplayName);
+        });
+
         // online users
         broadcastOnlineUsers(io, userId, matchedUserId, roomId);
 

@@ -38,9 +38,10 @@ export default function CollaborationPage() {
         return () => {
             clearMatchedUser();
             clearSessionStorage();
+            socketRef.current?.emit("leave-room", user?.displayName || "Unknown User");
             router.push("/");
         }
-    }, [clearMatchedUser, clearSessionStorage, router]);
+    }, [clearMatchedUser, clearSessionStorage, router, user]);
 
     const handleSendMessage = useMemo(() => {
         return () => {
@@ -177,6 +178,10 @@ export default function CollaborationPage() {
                 }).filter(id => id !== null) as AvatarInfo[];
                 setOnlineUsers(onlineUsers);
             });
+
+            socket.on("leave-room", (partnerDisplayName) => {
+                alert(`${partnerDisplayName} has left the room.`);
+            })
 
             doc.on("update", (update: Uint8Array) => {
                 if (socket) socket.emit("yjs-update", update);
