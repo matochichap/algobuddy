@@ -41,16 +41,14 @@ function attachWebsocketServer(server: any) {
         console.log(`Client connected: ${userId}`);
 
         // join room and ydoc setup
-        const { matchedUserId, difficulty, topic, language } = socket.handshake.query as {
+        const { matchedUserId, questionId } = socket.handshake.query as {
             matchedUserId: string;
-            difficulty: string;
-            topic: string;
-            language: string;
+            questionId: string;
         };
         const roomId = [userId, matchedUserId].sort().join("_");
 
         if (!docs.has(roomId)) {
-            docs.set(roomId, await getYdoc(roomId, difficulty, topic, language));
+            docs.set(roomId, await getYdoc(roomId, questionId));
         }
 
         const doc = docs.get(roomId)!;
@@ -78,7 +76,7 @@ function attachWebsocketServer(server: any) {
             // room is empty
             if (io.sockets.adapter.rooms.get(roomId) === undefined && docs.has(roomId)) {
                 // cache doc
-                addYdoc(roomId, difficulty, topic, language, doc);
+                addYdoc(roomId, questionId, doc);
                 docs.delete(roomId);
                 console.log("Deleted room: ", roomId);
             }

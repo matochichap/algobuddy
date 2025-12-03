@@ -13,17 +13,17 @@ redis.on("connect", () => {
     console.log("Connected to Redis");
 });
 
-async function addYdoc(roomId: string, difficulty: string, topic: string, language: string, ydoc: Y.Doc): Promise<string> {
-    if (!roomId || !difficulty || !topic || !language) {
-        throw new Error("Invalid parameters to addYdoc");
+async function addYdoc(roomId: string, questionId: string, ydoc: Y.Doc): Promise<void> {
+    if (!roomId || !questionId || !ydoc) {
+        console.error("Invalid parameters to addYdoc");
     }
     const ydocString = Buffer.from(Y.encodeStateAsUpdate(ydoc)).toString('base64');
-    return await redis.set(`ydoc:${roomId}:${normalise(difficulty)}:${normalise(topic)}:${normalise(language)}`, ydocString, 'EX', YDOC_EXPIRATION_TIME);
+    await redis.set(`ydoc:${roomId}:${normalise(questionId)}`, ydocString, 'EX', YDOC_EXPIRATION_TIME);
 }
 
-async function getYdoc(roomId: string, difficulty: string, topic: string, language: string): Promise<Y.Doc> {
+async function getYdoc(roomId: string, questionId: string): Promise<Y.Doc> {
     const ydoc = new Y.Doc();
-    return await redis.get(`ydoc:${roomId}:${normalise(difficulty)}:${normalise(topic)}:${normalise(language)}`).then((ydocString) => {
+    return await redis.get(`ydoc:${roomId}:${questionId}`).then((ydocString) => {
         if (ydocString) {
             const ydocBuffer = Buffer.from(ydocString, 'base64');
             Y.applyUpdate(ydoc, new Uint8Array(ydocBuffer));

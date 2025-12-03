@@ -31,11 +31,6 @@ export default function CollaborationPage() {
     const docRef = useRef<Y.Doc | null>(null);
     const socketRef = useRef<Socket | null>(null);
     const chatEndRef = useRef<HTMLDivElement | null>(null);
-    // const userRef = useRef(user);
-
-    // useEffect(() => {
-    //     userRef.current = user;
-    // }, [user]);
 
     const router = useRouter();
 
@@ -135,17 +130,20 @@ export default function CollaborationPage() {
                 questionSeed: matchedUser.questionSeed!,
             });
 
+            let fetchedQuestion: Question | null = null;
+
             try {
                 const res = await authFetch(`${process.env.NEXT_PUBLIC_QUESTION_SERVICE_BASE_URL}/api/question?${params}`, {
                     method: "GET",
                 });
                 const data = await res.json();
-                if (isMounted) setQuestion(data);
+                if (isMounted) {
+                    setQuestion(data);
+                    fetchedQuestion = data;
+                }
             } catch (err) {
                 console.error("Failed to fetch question:", err);
             }
-
-            if (!isMounted) return;
 
             // setup websocket connection
             socket = io(process.env.NEXT_PUBLIC_COLLABORATION_SERVICE_BASE_URL, {
@@ -153,9 +151,7 @@ export default function CollaborationPage() {
                 query: {
                     token: accessToken,
                     matchedUserId: matchedUser.userId,
-                    difficulty: matchedUser.difficulty,
-                    topic: matchedUser.topic,
-                    language: matchedUser.language,
+                    questionId: fetchedQuestion?.id || "",
                 },
                 transports: ['websocket'],
             });
@@ -168,15 +164,14 @@ export default function CollaborationPage() {
             });
 
             socket.on("chat", (message: ChatMessage) => {
-                if (isMounted) setChat((prevChat) => [...prevChat, message]);
+                if (!isMounted) return;
+                setChat((prevChat) => [...prevChat, message]);
             });
 
             socket.on("online-users", (onlineUserIds: string[]) => {
                 if (!isMounted) return;
-                // const currentUser = userRef.current;
                 const onlineUsers = onlineUserIds.map(id => {
                     if (id === user?.id) return { displayName: user.displayName, picture: user.picture };
-                    // if (id === currentUser?.id) return { displayName: currentUser.displayName, picture: currentUser.picture };
                     if (id === matchedUser.userId) return { displayName: matchedUser.displayName, picture: matchedUser.picture };
                     return null;
                 }).filter(id => id !== null) as AvatarInfo[];
