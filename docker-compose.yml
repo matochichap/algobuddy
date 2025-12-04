@@ -30,8 +30,9 @@ services:
       - ./.env.production.local
     networks:
       - algobuddy
-    depends_on:
-      - mongo-init
+    # depends_on:
+    #   - mongo-init
+    #   - redis
   matching-service:
     build:
       context: .
@@ -42,8 +43,8 @@ services:
       - ./.env.production.local
     networks:
       - algobuddy
-    depends_on:
-      - redis
+    # depends_on:
+    #   - redis
   question-service:
     build:
       context: .
@@ -54,8 +55,8 @@ services:
       - ./.env.production.local
     networks:
       - algobuddy
-    depends_on:
-      - mongo-init
+    # depends_on:
+    #   - mongo-init
   collaboration-service:
     build:
       context: .
@@ -66,36 +67,37 @@ services:
       - ./.env.production.local
     networks:
       - algobuddy
-  redis:
-    image: redis:latest
-    hostname: "redis"
-    command: redis-server --requirepass ${REDIS_PASSWORD} --notify-keyspace-events Ex
-    volumes:
-      - ./db/redis_data_build:/data/db
-    networks:
-      - algobuddy
-  mongo:
-    image: mongo
-    hostname: "mongo"
-    command: mongod --replSet rs0 --bind_ip_all --port 27017
-    volumes:
-      - ./db/mongo_data_build:/data/db
-    networks:
-      - algobuddy
-  mongo-init:
-    image: mongo
-    volumes:
-      - ./db/config/init-mongo.sh:/init-mongo.sh
-    entrypoint: sh /init-mongo.sh
-    networks:
-      - algobuddy
-    depends_on:
-      - mongo
+    # depends_on:
+    #   - redis
+    # redis:
+    #   image: redis:latest
+    #   hostname: "redis"
+    #   command: redis-server --requirepass ${REDIS_PASSWORD} --notify-keyspace-events Ex
+    #   volumes:
+    #     - ./db/redis_data_build:/data/db
+    #   networks:
+    #     - algobuddy
+    # mongo:
+    #   image: mongo
+    #   hostname: "mongo"
+    #   command: mongod --replSet rs0 --bind_ip_all --port 27017
+    #   volumes:
+    #     - ./db/mongo_data_build:/data/db
+    #   networks:
+    #     - algobuddy
+    # mongo-init:
+    #   image: mongo
+    #   volumes:
+    #     - ./db/config/init-mongo.sh:/init-mongo.sh
+    #   entrypoint: sh /init-mongo.sh
+    #   networks:
+    #     - algobuddy
+    #   depends_on:
+    #     - mongo
 
 networks:
   algobuddy:
 
-
-volumes:
-  redis_data:
-  mongo_data:
+    # volumes:
+    #   redis_data:
+    #   mongo_data:

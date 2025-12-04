@@ -5,19 +5,27 @@ import { MatchedUserInfo } from "shared";
 import { allDifficulties, allTopics, allLanguages, MATCH_TTL } from "../config/constants";
 
 const redis = new Redis({
-    host: process.env.REDIS_HOST!,
     port: parseInt(process.env.REDIS_PORT!),
-    password: process.env.REDIS_PASSWORD!
+    host: process.env.REDIS_HOST!,
+    username: process.env.REDIS_USERNAME!,
+    password: process.env.REDIS_PASSWORD!,
 });
 
 const subscriber = new Redis({
-    host: process.env.REDIS_HOST!,
     port: parseInt(process.env.REDIS_PORT!),
-    password: process.env.REDIS_PASSWORD!
+    host: process.env.REDIS_HOST!,
+    username: process.env.REDIS_USERNAME!,
+    password: process.env.REDIS_PASSWORD!,
 });
 
 redis.on("connect", () => {
     console.log("Connected to Redis");
+    // Enable keyspace notifications for expired events (E = Keyevent events, x = Expired events)
+    redis.config("SET", "notify-keyspace-events", "Ex").then(() => {
+        console.log("Keyspace notifications enabled");
+    }).catch((err) => {
+        console.error("Failed to enable keyspace notifications:", err);
+    });
 });
 
 subscriber.on("connect", () => {
