@@ -32,13 +32,13 @@ router.get('/google/callback', async (req, res) => {
             res.cookie('userId', user.id, {
                 httpOnly: true,
                 secure: true,
-                sameSite: 'lax',
+                sameSite: 'none', // 'none' for cross-site usage
                 maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
             });
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,
-                sameSite: 'lax',
+                sameSite: 'none',
                 maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
             });
 
@@ -95,13 +95,13 @@ router.post('/logout', async (req, res) => {
         res.clearCookie('userId', {
             httpOnly: true,
             secure: true,
-            sameSite: 'lax'
+            sameSite: 'none'
         });
 
         res.clearCookie('refreshToken', {
             httpOnly: true,
             secure: true,
-            sameSite: 'lax'
+            sameSite: 'none'
         });
 
         res.json({ message: 'Logged out successfully' });
