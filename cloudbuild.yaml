@@ -36,3 +36,6 @@ images:
   - 'gcr.io/$PROJECT_ID/matching-service'
   - 'gcr.io/$PROJECT_ID/question-service'
   - 'gcr.io/$PROJECT_ID/collaboration-service'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
