@@ -1,0 +1,19 @@
+steps:
+  # Build the matching-service image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/matching-service', '-f', 'matching-service/Dockerfile', '.']
+
+  # Push the image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/matching-service']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'matching-service', '--image', 'gcr.io/$PROJECT_ID/matching-service', '--region', 'asia-southeast1', '--platform', 'managed', '--allow-unauthenticated']
+
+images:
+  - 'gcr.io/$PROJECT_ID/matching-service'
+
+options:
+  logging: CLOUD_LOGGING_ONLY

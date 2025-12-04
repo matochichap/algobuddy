@@ -1,0 +1,19 @@
+steps:
+  # Build the api-gateway image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/api-gateway', '-f', 'api-gateway/Dockerfile', '.']
+
+  # Push the image
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/$PROJECT_ID/api-gateway']
+
+  # Deploy to Cloud Run
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args: ['run', 'deploy', 'api-gateway', '--image', 'gcr.io/$PROJECT_ID/api-gateway', '--region', 'asia-southeast1', '--platform', 'managed', '--allow-unauthenticated']
+
+images:
+  - 'gcr.io/$PROJECT_ID/api-gateway'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
