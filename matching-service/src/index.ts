@@ -5,7 +5,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env"), override: true });
 
 import app from "./server";
 
-const PORT = process.env.MATCHING_SERVICE_PORT;
+const PORT = process.env.PORT || process.env.MATCHING_SERVICE_PORT;
 
 app.listen(PORT, () => {
     console.log(`Matching Service is running on port ${PORT}`);

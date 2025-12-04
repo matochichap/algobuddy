@@ -4,7 +4,7 @@ dotenv.config({ path: path.resolve(__dirname, "../../.env") });
 dotenv.config({ path: path.resolve(__dirname, "../.env"), override: true });
 import app from "./server";
 
-const PORT = process.env.USER_SERVICE_PORT;
+const PORT = process.env.PORT || process.env.USER_SERVICE_PORT;
 
 app.listen(PORT, () => {
     console.log(`User Service is running on port ${PORT}`);

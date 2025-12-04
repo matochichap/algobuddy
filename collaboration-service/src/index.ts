@@ -5,7 +5,7 @@ dotenv.config({ path: path.resolve(__dirname, "../.env"), override: true });
 
 import app from "./server";
 
-const PORT = process.env.COLLABORATION_SERVICE_PORT;
+const PORT = process.env.PORT || process.env.COLLABORATION_SERVICE_PORT;
 
 app.listen(PORT, () => {
     console.log(`Collaboration Service is running on port ${PORT}`);

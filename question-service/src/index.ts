@@ -20,7 +20,7 @@ const seedQuestions = async () => {
     }
 }
 
-const PORT = process.env.QUESTION_SERVICE_PORT!;
+const PORT = process.env.PORT || process.env.QUESTION_SERVICE_PORT;
 
 app.listen(PORT, async () => {
     await seedQuestions();

@@ -9,7 +9,7 @@ import app from "./server";
 import { wsMatchingProxy } from "./routes/match";
 import { wsCollaborationProxy } from "./routes/collaboration";
 
-const PORT = process.env.API_GATEWAY_PORT;
+const PORT = process.env.PORT || process.env.API_GATEWAY_PORT;
 const server = http.createServer(app);
 
 // createProxyMiddleware does not handle upgrade events on first try properly
