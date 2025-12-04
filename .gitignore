@@ -1,4 +1,5 @@
 .env
+.env.production
 .env.production.local
 env_files.zip
 redis_data

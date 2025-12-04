@@ -23,6 +23,10 @@ const seedQuestions = async () => {
 const PORT = process.env.PORT || process.env.QUESTION_SERVICE_PORT;
 
 app.listen(PORT, async () => {
-    await seedQuestions();
+    try {
+        await seedQuestions();
+    } catch (error) {
+        console.error("Error seeding questions:", error);
+    }
     console.log(`Question Service is running on port ${PORT}`);
 });
