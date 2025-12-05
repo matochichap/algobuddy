@@ -50,6 +50,7 @@ router.get('/google/callback', async (req, res) => {
                 <body>
                     <script>
                         window.location.href = "${process.env.UI_BASE_URL}";
+                        console.log("Redirecting to app...");
                     </script>
                 </body>
             </html>`;
