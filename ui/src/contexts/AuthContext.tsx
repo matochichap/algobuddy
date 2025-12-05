@@ -97,6 +97,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const initAuth = async () => {
+            // Check for tokens in URL
+            if (typeof window !== 'undefined') {
+                const params = new URLSearchParams(window.location.search);
+                const userId = params.get('userId');
+                const refreshToken = params.get('refreshToken');
+
+                if (userId && refreshToken) {
+                    // Set cookies
+                    const days = 7;
+                    const date = new Date();
+                    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+                    const expires = "; expires=" + date.toUTCString();
+
+                    document.cookie = `userId=${userId}${expires}; path=/; Secure; SameSite=None`;
+                    document.cookie = `refreshToken=${refreshToken}${expires}; path=/; Secure; SameSite=None`;
+
+                    // Clear URL params
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+
             const newToken = await refreshAccessToken();
             if (newToken) {
                 setAccessToken(newToken);
