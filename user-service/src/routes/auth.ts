@@ -41,11 +41,19 @@ router.get('/google/callback', async (req, res) => {
                 sameSite: 'none',
                 maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
             });
-
-            res.redirect(`${process.env.UI_BASE_URL}`);
         } catch (error) {
             console.error('OAuth callback error:', error);
-            res.redirect(`${process.env.UI_BASE_URL}/auth/login`);
+        } finally {
+            // workaround to redirect to frontend for ios support
+            const html = `
+            <html>
+                <body>
+                    <script>
+                        window.location.href = "${process.env.UI_BASE_URL}";
+                    </script>
+                </body>
+            </html>`;
+            res.send(html);
         }
     })(req, res);
 });
