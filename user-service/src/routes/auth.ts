@@ -10,7 +10,21 @@ import { UserRole } from "shared";
 const router = Router();
 
 // Redirect to google for authentication
-router.get('/google', passport.authenticate('google'));
+// router.get('/google', passport.authenticate('google'));
+
+// Provide google oauth url
+router.get('/google', (req, res) => {
+    const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
+    const options = new URLSearchParams({
+        client_id: process.env.GOOGLE_CLIENT_ID!,
+        redirect_uri: process.env.GOOGLE_CALLBACK_URL!,
+        response_type: 'code',
+        scope: ['profile', 'email'].join(' '),
+    });
+
+    const url = `${rootUrl}?${options.toString()}`;
+    res.json({ url });
+});
 
 // Handle callback from google
 router.get('/google/callback', async (req, res) => {
@@ -35,36 +49,21 @@ router.get('/google/callback', async (req, res) => {
                 httpOnly: true,
                 secure: true,
                 sameSite: 'none', // 'none' for cross-site usage
+                path: '/',
                 maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
             });
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,
                 sameSite: 'none',
+                path: '/',
                 maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
             });
+
+            res.redirect(`${process.env.UI_BASE_URL}/auth/success`);
         } catch (error) {
             console.error('OAuth callback error:', error);
-        } finally {
-            // workaround to redirect to frontend for ios support
-            const html = `
-                <html lang="en">
-                    <head>
-                        <title>Redirecting...</title>
-                    </head>
-                    <body>
-                        <h1>Redirecting...</h1>
-                        <div>You will be redirected in a moment. If you are not redirected, click the following link: <a id="link" href="https://example.com">Go Now</a></div>
-                        <script type="text/javascript">
-                            var host = "${process.env.UI_BASE_URL}";
-                            document.getElementById("link").setAttribute("href", host);
-                            setTimeout(function(){
-                                window.location.href = host;
-                            }, 3000);
-                        </script>
-                    </body>
-                </html>`;
-            res.send(html);
+            res.redirect(`${process.env.UI_BASE_URL}/auth/login`);
         }
     })(req, res);
 });
