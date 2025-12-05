@@ -45,15 +45,32 @@ router.get('/google/callback', async (req, res) => {
             console.error('OAuth callback error:', error);
         } finally {
             // workaround to redirect to frontend for ios support
+            // const html = `
+            // <html>
+            //     <body>
+            //         <script>
+            //             window.location.href = "${process.env.UI_BASE_URL}";
+            //             console.log("Redirecting to app...");
+            //         </script>
+            //     </body>
+            // </html>`;
             const html = `
-            <html>
-                <body>
-                    <script>
-                        window.location.href = "${process.env.UI_BASE_URL}";
-                        console.log("Redirecting to app...");
-                    </script>
-                </body>
-            </html>`;
+                <html lang="en">
+                    <head>
+                        <title>Redirecting...</title>
+                    </head>
+                    <body>
+                        <h1>Redirecting...</h1>
+                        <div>You will be redirected in a moment. If you are not redirected, click the following link: <a id="link" href="https://example.com">Go Now</a></div>
+                        <script type="text/javascript">
+                            var host = "${process.env.UI_BASE_URL}";
+                            document.getElementById("link").setAttribute("href", host);
+                            setTimeout(function(){
+                                window.location.href = host;
+                            }, 3000);
+                        </script>
+                    </body>
+                </html>`;
             res.send(html);
         }
     })(req, res);
