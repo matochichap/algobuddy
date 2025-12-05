@@ -32,13 +32,12 @@ function attachWebsocketServer(server: any) {
         const userId = socket.handshake.headers['x-user-id'] as string;
         socket.data.userId = userId;
         // track connected clients
-        const oldSocket = socketClients.get(userId);
-        socketClients.set(userId, socket);
-
-        if (oldSocket) {
-            console.log(`Disconnecting existing socket for user ${userId}`);
-            oldSocket.disconnect(true);
+        if (socketClients.has(userId)) {
+            socket.emit("disconnect_reason", { reason: "User already connected" });
+            socket.disconnect();
+            return;
         }
+        socketClients.set(userId, socket);
         console.log(`Client connected: ${userId}`);
 
         // join room and ydoc setup
@@ -67,7 +66,7 @@ function attachWebsocketServer(server: any) {
         });
 
         // partner leave room
-        socket.on("leave-room", (partnerDisplayName) => {
+        socket.on("leave-room", (partnerDisplayName: string) => {
             socket.to(roomId).emit("leave-room", partnerDisplayName);
         });
 
@@ -76,9 +75,7 @@ function attachWebsocketServer(server: any) {
 
         socket.on("disconnect", () => {
             socket.leave(roomId);
-            if (socketClients.get(userId) === socket) {
-                socketClients.delete(userId);
-            }
+            socketClients.delete(userId);
             broadcastOnlineUsers(io, userId, matchedUserId, roomId);
             console.log(`User ${userId} left room ${roomId}`);
             // room is empty

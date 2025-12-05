@@ -218,7 +218,7 @@ export default function CollaborationPage() {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [chat]);
 
-    if (!ready) return <Spinner />;
+    if (!ready) return <Spinner fullScreen={true} />;
 
     return (
         <div className="h-screen flex flex-col bg-gray-900 overflow-hidden">
