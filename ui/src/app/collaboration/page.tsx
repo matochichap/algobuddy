@@ -155,6 +155,7 @@ export default function CollaborationPage() {
                     questionId: fetchedQuestion?.id || "",
                 },
                 transports: ['websocket'],
+                forceNew: true,
             });
 
             doc = new Y.Doc();
@@ -201,7 +202,10 @@ export default function CollaborationPage() {
 
         return () => {
             isMounted = false;
-            if (socket) socket.disconnect();
+            if (socket) {
+                socket.removeAllListeners();
+                socket.disconnect();
+            }
             if (doc) doc.destroy();
             docRef.current = null;
             socketRef.current = null;

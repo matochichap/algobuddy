@@ -32,12 +32,13 @@ function attachWebsocketServer(server: any) {
         const userId = socket.handshake.headers['x-user-id'] as string;
         socket.data.userId = userId;
         // track connected clients
-        if (socketClients.has(userId)) {
-            socket.emit("disconnect_reason", { reason: "User already connected" });
-            socket.disconnect();
-            return;
-        }
+        const oldSocket = socketClients.get(userId);
         socketClients.set(userId, socket);
+
+        if (oldSocket) {
+            console.log(`Disconnecting existing socket for user ${userId}`);
+            oldSocket.disconnect(true);
+        }
         console.log(`Client connected: ${userId}`);
 
         // join room and ydoc setup
@@ -75,7 +76,9 @@ function attachWebsocketServer(server: any) {
 
         socket.on("disconnect", () => {
             socket.leave(roomId);
-            socketClients.delete(userId);
+            if (socketClients.get(userId) === socket) {
+                socketClients.delete(userId);
+            }
             broadcastOnlineUsers(io, userId, matchedUserId, roomId);
             console.log(`User ${userId} left room ${roomId}`);
             // room is empty
