@@ -36,9 +36,9 @@ export default function CollaborationPage() {
 
     const handleLeaveRoom = useMemo(() => {
         return () => {
+            socketRef.current?.emit("leave-room", user?.displayName || "Unknown User");
             clearMatchedUser();
             clearSessionStorage();
-            socketRef.current?.emit("leave-room", user?.displayName || "Unknown User");
             router.push("/");
         }
     }, [clearMatchedUser, clearSessionStorage, router, user]);
