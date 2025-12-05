@@ -30,22 +30,23 @@ router.get('/google/callback', async (req, res) => {
             // Create new refresh token in db
             const refreshToken = await createRefreshToken(user.id);
 
-            // Redirect to frontend with tokens in query params
-            const redirectUrl = `${process.env.UI_BASE_URL}?userId=${user.id}&refreshToken=${refreshToken}`;
-            return res.redirect(redirectUrl);
+            // set cookies for userId and refreshToken
+            res.cookie('userId', user.id, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none', // 'none' for cross-site usage
+                maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
+            });
+            res.cookie('refreshToken', refreshToken, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
+            });
         } catch (error) {
             console.error('OAuth callback error:', error);
         } finally {
             // workaround to redirect to frontend for ios support
-            // const html = `
-            // <html>
-            //     <body>
-            //         <script>
-            //             window.location.href = "${process.env.UI_BASE_URL}";
-            //             console.log("Redirecting to app...");
-            //         </script>
-            //     </body>
-            // </html>`;
             const html = `
                 <html lang="en">
                     <head>
