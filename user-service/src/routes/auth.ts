@@ -48,8 +48,9 @@ router.get('/google/callback', async (req, res) => {
             res.cookie('userId', user.id, {
                 httpOnly: true,
                 secure: true,
-                sameSite: 'none', // 'none' for cross-site usage
+                sameSite: 'lax', // 'none' for cross-site usage
                 path: '/',
+                domain: process.env.DOMAIN_NAME || undefined,
                 maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
             });
             res.cookie('refreshToken', refreshToken, {
@@ -57,6 +58,7 @@ router.get('/google/callback', async (req, res) => {
                 secure: true,
                 sameSite: 'none',
                 path: '/',
+                domain: process.env.DOMAIN_NAME || undefined,
                 maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
             });
 
