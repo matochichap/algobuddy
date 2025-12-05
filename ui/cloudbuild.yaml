@@ -16,7 +16,7 @@ steps:
       - '--build-arg'
       - 'NEXT_PUBLIC_COLLABORATION_SERVICE_BASE_URL=$_API_GATEWAY_URL'
       - '--build-arg'
-      - 'NEXT_PUBLIC_PISTON_API_BASE_URL=https://emkc.org'
+      - 'NEXT_PUBLIC_PISTON_API_BASE_URL=$_PISTON_API_BASE_URL'
       - '.'
 
   # Push the image

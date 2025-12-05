@@ -1,5 +1,6 @@
-# connect with mongo atlas and redis cloud
-name: algobuddy
+# connect with local db containers
+# docker compose -f docker-compose.local.yml up
+name: algobuddy-local
 services:
   ui:
     build:
@@ -20,7 +21,7 @@ services:
       dockerfile: api-gateway/Dockerfile
     image: api-gateway:latest
     env_file:
-      - ./.env.production
+      - ./.env.production.local
     ports:
       - "4000:4000"
     networks:
@@ -32,9 +33,12 @@ services:
     image: user-service:latest
     hostname: "user-service"
     env_file:
-      - ./.env.production
+      - ./.env.production.local
     networks:
       - algobuddy
+    depends_on:
+      - mongo-init
+      - redis
   matching-service:
     build:
       context: .
@@ -42,9 +46,11 @@ services:
     image: matching-service:latest
     hostname: "matching-service"
     env_file:
-      - ./.env.production
+      - ./.env.production.local
     networks:
       - algobuddy
+    depends_on:
+      - redis
   question-service:
     build:
       context: .
@@ -52,9 +58,11 @@ services:
     image: question-service:latest
     hostname: "question-service"
     env_file:
-      - ./.env.production
+      - ./.env.production.local
     networks:
       - algobuddy
+    depends_on:
+      - mongo-init
   collaboration-service:
     build:
       context: .
@@ -62,9 +70,41 @@ services:
     image: collaboration-service:latest
     hostname: "collaboration-service"
     env_file:
-      - ./.env.production
+      - ./.env.production.local
     networks:
       - algobuddy
+    depends_on:
+      - redis
+  redis:
+    image: redis:latest
+    hostname: "redis"
+    command: redis-server --notify-keyspace-events Ex
+    volumes:
+      - ./db/redis_data_build:/data/db
+    networks:
+      - algobuddy
+  mongo:
+    image: mongo
+    hostname: "mongo"
+    command: mongod --replSet rs0 --bind_ip_all --port 27017
+    volumes:
+      - ./db/mongo_data_build:/data/db
+    networks:
+      - algobuddy
+  mongo-init:
+    image: mongo
+    volumes:
+      - ./db/config/init-mongo.sh:/init-mongo.sh
+    entrypoint: sh /init-mongo.sh
+    networks:
+      - algobuddy
+    depends_on:
+      - mongo
 
 networks:
   algobuddy:
+
+
+volumes:
+  redis_data:
+  mongo_data:
