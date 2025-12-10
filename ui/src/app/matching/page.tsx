@@ -1,5 +1,4 @@
 'use client';
-
 import { useUser } from "@/contexts/UserContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { useMatch } from "@/contexts/MatchContext";
