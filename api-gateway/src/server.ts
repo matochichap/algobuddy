@@ -5,6 +5,7 @@ import { userRouter } from "./routes/user";
 import { matchRouter } from "./routes/match";
 import { questionRouter } from "./routes/question";
 import { collaborationRouter } from "./routes/collaboration";
+import { uiRouter } from "./routes/ui";
 
 const app = express();
 
@@ -18,9 +19,6 @@ app.use(userRouter);
 app.use(matchRouter);
 app.use(questionRouter);
 app.use(collaborationRouter);
-
-app.get("/", (req, res) => {
-    res.send("API Gateway is running!");
-});
+app.use(uiRouter);  // route to ui if no other route matches
 
 export default app;

@@ -16,17 +16,7 @@ export default function Login() {
     }, [accessToken, isLoading, router]);
 
     const handleGoogleLogin = async () => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_USER_SERVICE_BASE_URL}/api/auth/google`, {
-                credentials: 'include'
-            });
-            const data = await response.json();
-            if (data.url) {
-                window.location.href = data.url;
-            }
-        } catch (error) {
-            console.error('Login init error:', error);
-        }
+        window.location.href = `${process.env.NEXT_PUBLIC_USER_SERVICE_BASE_URL}/api/auth/google`;
     };
 
     if (isLoading) {

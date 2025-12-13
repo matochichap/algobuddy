@@ -10,21 +10,7 @@ import { UserRole } from "shared";
 const router = Router();
 
 // Redirect to google for authentication
-// router.get('/google', passport.authenticate('google'));
-
-// Provide google oauth url
-router.get('/google', (req, res) => {
-    const rootUrl = 'https://accounts.google.com/o/oauth2/v2/auth';
-    const options = new URLSearchParams({
-        client_id: process.env.GOOGLE_CLIENT_ID!,
-        redirect_uri: process.env.GOOGLE_CALLBACK_URL!,
-        response_type: 'code',
-        scope: ['profile', 'email'].join(' '),
-    });
-
-    const url = `${rootUrl}?${options.toString()}`;
-    res.json({ url });
-});
+router.get('/google', passport.authenticate('google'));
 
 // Handle callback from google
 router.get('/google/callback', async (req, res) => {
@@ -32,12 +18,12 @@ router.get('/google/callback', async (req, res) => {
     passport.authenticate('google', { session: false }, async (err, user: User) => {
         if (err) {
             console.error('OAuth error:', err);
-            return res.redirect(`${process.env.UI_BASE_URL}/auth/login`);
+            return res.redirect(`${process.env.API_GATEWAY_BASE_URL}/auth/login`);
         }
 
         if (!user) {
             console.error('No user returned from OAuth');
-            return res.redirect(`${process.env.UI_BASE_URL}/auth/login`);
+            return res.redirect(`${process.env.API_GATEWAY_BASE_URL}/auth/login`);
         }
 
         try {
@@ -62,10 +48,10 @@ router.get('/google/callback', async (req, res) => {
                 maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
             });
 
-            res.redirect(`${process.env.UI_BASE_URL}/auth/success`);
+            res.redirect(`${process.env.API_GATEWAY_BASE_URL}`);
         } catch (error) {
             console.error('OAuth callback error:', error);
-            res.redirect(`${process.env.UI_BASE_URL}/auth/login`);
+            res.redirect(`${process.env.API_GATEWAY_BASE_URL}/auth/login`);
         }
     })(req, res);
 });
