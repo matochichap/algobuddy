@@ -34,17 +34,15 @@ router.get('/google/callback', async (req, res) => {
             res.cookie('userId', user.id, {
                 httpOnly: true,
                 secure: true,
-                sameSite: process.env.SAME_SITE! as 'lax' | 'strict' | 'none',
+                sameSite: 'lax',
                 path: '/',
-                domain: process.env.DOMAIN_NAME || undefined,
                 maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
             });
             res.cookie('refreshToken', refreshToken, {
                 httpOnly: true,
                 secure: true,
-                sameSite: process.env.SAME_SITE! as 'lax' | 'strict' | 'none',
+                sameSite: 'lax',
                 path: '/',
-                domain: process.env.DOMAIN_NAME || undefined,
                 maxAge: JWT_REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000 // days in milliseconds
             });
 
