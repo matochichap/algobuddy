@@ -141,7 +141,7 @@ export default function MatchingPage() {
                 <div
                     className="bg-gray-800/50 border border-gray-700 rounded-2xl p-8 max-w-lg w-full mx-4 transition-[height] duration-500 ease-in-out overflow-hidden"
                     style={{
-                        height: isMatching ? '320px' : matchedUser ? '520px' : '560px',
+                        height: isMatching ? '320px' : matchedUser ? '520px' : error ? '640px' : '560px',
                     }}
                 >
 

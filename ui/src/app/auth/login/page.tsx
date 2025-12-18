@@ -28,7 +28,7 @@ export default function Login() {
     }
 
     return (
-        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
+        <div className="flex items-center justify-center min-h-screen bg-gray-900">
             <div className="w-full max-w-md">
                 <div className="bg-gray-800 shadow-2xl rounded-2xl p-8 border border-gray-700">
                     {/* Logo/Header Section */}

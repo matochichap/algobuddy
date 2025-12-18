@@ -91,12 +91,12 @@ export default function Home() {
               </div>
               <div className="flex flex-wrap gap-4">
                 <Link href="/admin/users">
-                  <button className="bg-gray-700 hover:bg-gray-600 text-gray-100 px-5 py-3 rounded-lg text-base font-medium transition-colors border border-gray-600 hover:border-gray-500">
+                  <button className="bg-gray-700 hover:bg-gray-600 text-gray-100 px-5 py-3 rounded-lg text-base font-medium transition-colors border border-gray-600 hover:border-gray-500 cursor-pointer">
                     👥 Manage Users
                   </button>
                 </Link>
                 <Link href="/admin/questions">
-                  <button className="bg-gray-700 hover:bg-gray-600 text-gray-100 px-5 py-3 rounded-lg text-base font-medium transition-colors border border-gray-600 hover:border-gray-500">
+                  <button className="bg-gray-700 hover:bg-gray-600 text-gray-100 px-5 py-3 rounded-lg text-base font-medium transition-colors border border-gray-600 hover:border-gray-500 cursor-pointer">
                     📝 Manage Questions
                   </button>
                 </Link>

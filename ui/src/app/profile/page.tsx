@@ -116,14 +116,14 @@ export default function Profile() {
             );
 
             if (!response.ok) {
-                throw new Error('Failed to update profile picture');
+                setError('Failed to update profile picture.');
+                return;
             }
 
             // Refresh page to get updated user data
             setIsEditingPicture(false);
             window.location.reload();
         } catch (err) {
-            setError('Failed to update profile picture. Please try again.');
             console.error('Update profile picture error:', err);
         } finally {
             setIsSaving(false);

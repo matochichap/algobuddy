@@ -285,7 +285,7 @@ export default function AdminQuestionsPage() {
                                     <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 flex flex-col h-full">
                                         <h2 className="text-xl font-semibold text-gray-100 mb-5 flex-shrink-0">Edit Question</h2>
 
-                                        <div className="overflow-y-auto flex-1 space-y-4 min-h-0 max-h-full">
+                                        <div className="overflow-y-auto flex-1 space-y-4 min-h-0 max-h-full p-2">
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-300 mb-2">Title</label>
                                                 <input

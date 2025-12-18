@@ -184,7 +184,7 @@ export default function AdminUsersPage() {
                                         <h2 className="text-xl font-semibold text-gray-100 mb-5 flex-shrink-0">Edit User Profile</h2>
 
                                         <div className="overflow-y-auto flex-1 space-y-3 min-h-0 max-h-full">
-                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-1">
                                                 <div>
                                                     <label className="block text-sm font-medium text-gray-300 mb-2">Display Name</label>
                                                     <input
