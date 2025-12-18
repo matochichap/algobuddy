@@ -57,7 +57,9 @@ export const userSchemas = {
         }),
         body: z.object({
             displayName: z.string().min(1, 'Display name cannot be empty').max(50).optional(),
-            picture: z.url('Picture must be a valid URL').optional(),
+            picture: z.url().refine((url) => url.startsWith('https://'), {
+                message: 'Picture must be a HTTP/HTTPS URL'
+            }).optional(),
         }).refine((data: Record<string, unknown>) => Object.keys(data).length > 0, {
             message: 'At least one field must be provided',
         })
@@ -83,7 +85,9 @@ export const userSchemas = {
             displayName: z.string().min(1).max(50).optional(),
             firstName: z.string().min(0).max(50).optional(),
             lastName: z.string().min(0).max(50).optional(),
-            picture: z.url().optional(),
+            picture: z.url().refine((url) => url.startsWith('https://'), {
+                message: 'Picture must be a HTTP/HTTPS URL'
+            }).optional(),
             email: z.email().optional(),
             role: z.enum([UserRole.USER, UserRole.ADMIN]).optional(),
         }).refine((data: Record<string, unknown>) => Object.keys(data).length > 0, {
