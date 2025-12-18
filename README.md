@@ -12,16 +12,6 @@ AlgoBuddy is a collaborative technical interview preparation platform that enabl
 - **UI** - Next.js frontend application
 - **Shared** - Common TypeScript types and interfaces shared across services
 
-### Technology Stack
-- **Runtime**: Node
-- **Web Framework**: Express
-- **Websocket**: Socket.IO
-- **Frontend**: Next.js
-- **Databases**: MongoDB, Redis
-- **ORM**: Prisma
-- **Authentication**: JWT tokens with Google OAuth 2.0
-- **Containerization**: Docker
-
 # Development
 
 ### Environment Variables
