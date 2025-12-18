@@ -385,8 +385,14 @@ export default function AdminQuestionsPage() {
 
                     {/* Create Question Modal */}
                     {showCreateForm && (
-                        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                            <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <div
+                            className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+                            onClick={() => setShowCreateForm(false)}
+                        >
+                            <div
+                                className="bg-gray-800 border border-gray-700 rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto"
+                                onClick={(e) => e.stopPropagation()}
+                            >
                                 <h2 className="text-lg font-semibold text-gray-100 mb-4">Create New Question</h2>
                                 {error && (
                                     <div className="mb-6 bg-red-900 border border-red-700 rounded-md p-4 flex-shrink-0">
