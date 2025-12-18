@@ -248,12 +248,17 @@ export default function CollaborationPage() {
                                             key={idx}
                                             src={avatar.picture}
                                             alt={avatar.displayName || ""}
+                                            title={avatar.displayName || ""}
                                             width={32}
                                             height={32}
                                             className="w-8 h-8 rounded-full object-cover border border-gray-500 hover:border-gray-400"
                                         />
                                     ) : (
-                                        <div key={idx} className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500">
+                                        <div
+                                            key={idx}
+                                            title={avatar.displayName || ""}
+                                            className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500"
+                                        >
                                             <span className="text-sm font-medium text-gray-200">
                                                 {avatar.displayName?.charAt(0).toUpperCase() || ""}
                                             </span>
