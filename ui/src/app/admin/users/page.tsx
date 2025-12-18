@@ -174,11 +174,11 @@ export default function AdminUsersPage() {
                             </div>
 
                             {selected && editing && (
-                                <div className="xl:col-span-3 h-full">
+                                <div className="xl:col-span-3 h-full min-h-0">
                                     <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 flex flex-col h-full">
                                         <h2 className="text-lg font-semibold text-gray-100 mb-4 flex-shrink-0">User Profile</h2>
 
-                                        <div className="overflow-y-auto flex-1 space-y-3">
+                                        <div className="overflow-y-auto flex-1 space-y-3 min-h-0 max-h-full">
                                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                                 <div>
                                                     <label className="block text-sm font-medium text-gray-200 mb-1">Display Name</label>
