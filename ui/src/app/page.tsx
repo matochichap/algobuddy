@@ -61,17 +61,17 @@ export default function Home() {
             <Link href="/profile" className="group">
               <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 hover:border-blue-500 transition-all hover:bg-gray-750 h-full">
                 <div className="text-4xl mb-4">👤</div>
-                <h3 className="text-xl font-semibold text-gray-100 mb-3 group-hover:text-blue-400 transition-colors">View Profile</h3>
+                <h3 className="text-xl font-semibold text-gray-100 mb-3 group-hover:text-blue-400 transition-colors">Manage Profile</h3>
                 <p className="text-gray-400">
                   Manage your account settings and personalize your experience.
                 </p>
               </div>
             </Link>
 
-            <Link href="/matching" className="group">
+            <Link href="/questions" className="group">
               <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 hover:border-blue-500 transition-all hover:bg-gray-750 h-full">
                 <div className="text-4xl mb-4">📚</div>
-                <h3 className="text-xl font-semibold text-gray-100 mb-3 group-hover:text-blue-400 transition-colors">Practice Problems</h3>
+                <h3 className="text-xl font-semibold text-gray-100 mb-3 group-hover:text-blue-400 transition-colors">Browse Questions</h3>
                 <p className="text-gray-400">
                   Browse coding challenges ranging from easy to hard difficulty.
                 </p>

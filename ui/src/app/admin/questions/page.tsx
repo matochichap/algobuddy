@@ -192,24 +192,24 @@ export default function AdminQuestionsPage() {
                                 setError(null);
                             }}
                             disabled={loading || busy}
-                            className="bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                            className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
                         >
                             Create Question
                         </button>
                     </div>
 
-                    <form onSubmit={handleSearch} className="flex gap-3 mb-6 flex-shrink-0">
+                    <form onSubmit={handleSearch} className="flex flex-wrap gap-3 mb-6 flex-shrink-0">
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Enter question title"
-                            className="flex-1 bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500 focus:ring-blue-400 focus:border-blue-400 text-sm"
+                            placeholder="Search by title..."
+                            className="flex-1 min-w-[200px] bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
                             disabled={loading || busy}
                         />
                         <select
                             value={topic}
                             onChange={(e) => setTopic(e.target.value)}
-                            className="bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500 focus:ring-blue-400 focus:border-blue-400 text-sm"
+                            className="bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading || busy}
                         >
                             <option value="">All Topics</option>
@@ -220,7 +220,7 @@ export default function AdminQuestionsPage() {
                         <select
                             value={difficulty}
                             onChange={(e) => setDifficulty(e.target.value)}
-                            className="bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500 focus:ring-blue-400 focus:border-blue-400 text-sm"
+                            className="bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading || busy}
                         >
                             <option value="">All Difficulties</option>
@@ -231,45 +231,48 @@ export default function AdminQuestionsPage() {
                         <button
                             type="submit"
                             disabled={loading || busy}
-                            className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-lg font-medium transition-colors"
                         >
                             {loading ? 'Searching…' : 'Search'}
                         </button>
                     </form>
 
                     {error && (
-                        <div className="mb-6 bg-red-900 border border-red-700 rounded-md p-4 flex-shrink-0">
-                            <p className="text-sm text-red-200">{error}</p>
+                        <div className="mb-6 bg-red-900/50 border border-red-700 rounded-lg p-4 flex-shrink-0">
+                            <p className="text-red-200">{error}</p>
                         </div>
                     )}
 
                     {results.length > 0 && (
                         <div className="grid grid-cols-1 xl:grid-cols-5 gap-6 flex-1 min-h-0 overflow-hidden h-full">
-                            <div className="xl:col-span-2 bg-gray-800 border border-gray-700 rounded-lg p-5 flex flex-col overflow-hidden">
-                                <h3 className="text-md font-semibold text-gray-100 mb-4 flex-shrink-0">Results ({results.length})</h3>
-                                <ul className="divide-y divide-gray-700 overflow-y-auto flex-1">
+                            <div className="xl:col-span-2 bg-gray-800/50 border border-gray-700 rounded-xl p-5 flex flex-col overflow-hidden">
+                                <h3 className="text-lg font-semibold text-gray-100 mb-4 flex-shrink-0">{results.length} Question{results.length !== 1 ? 's' : ''} Found</h3>
+                                <ul className="space-y-3 overflow-y-auto flex-1 pr-2">
                                     {results.map(q => (
-                                        <li key={q.id} className={`py-4 cursor-pointer ${selected?.id === q.id ? 'bg-gray-700' : 'hover:bg-gray-700/60'} rounded-md px-3`}
-                                            onClick={() => { setSelected(q); setEditing(q); }}>
-                                            <div className="flex flex-col gap-2">
-                                                <div className="text-gray-100 font-medium">{q.title}</div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className={`text-xs px-2 py-0.5 rounded-full border ${q.difficulty === Difficulty.EASY ? 'bg-green-600/30 border-green-500 text-green-200' :
-                                                        q.difficulty === Difficulty.MEDIUM ? 'bg-yellow-600/30 border-yellow-500 text-yellow-200' :
-                                                            'bg-red-600/30 border-red-500 text-red-200'
+                                        <li
+                                            key={q.id}
+                                            className={`p-4 rounded-lg cursor-pointer transition-all ${selected?.id === q.id
+                                                ? 'bg-blue-600/20 border-2 border-blue-500'
+                                                : 'bg-gray-800 border border-gray-700 hover:border-gray-500 hover:bg-gray-750'}`}
+                                            onClick={() => { setSelected(q); setEditing(q); }}
+                                        >
+                                            <div className="flex flex-col gap-3">
+                                                <h4 className="text-gray-100 font-medium leading-tight">{q.title}</h4>
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <span className={`text-xs px-2.5 py-1 rounded-full border font-medium ${q.difficulty === Difficulty.EASY ? 'bg-green-600/20 border-green-500 text-green-300' :
+                                                        q.difficulty === Difficulty.MEDIUM ? 'bg-yellow-600/20 border-yellow-500 text-yellow-300' :
+                                                            'bg-red-600/20 border-red-500 text-red-300'
                                                         }`}>
                                                         {getEnumDisplayName(q.difficulty)}
                                                     </span>
-                                                    <div className="flex flex-wrap gap-1">
-                                                        {q.topics.slice(0, 2).map(t => (
-                                                            <span key={t} className="text-xs px-2 py-0.5 rounded-full bg-blue-600/30 border-blue-500 text-blue-200 border">
-                                                                {getEnumDisplayName(t)}
-                                                            </span>
-                                                        ))}
-                                                        {q.topics.length > 2 && (
-                                                            <span className="text-xs text-gray-400">+{q.topics.length - 2}</span>
-                                                        )}
-                                                    </div>
+                                                    {q.topics.slice(0, 2).map(t => (
+                                                        <span key={t} className="text-xs px-2.5 py-1 rounded-full bg-blue-600/20 border border-blue-500/50 text-blue-300">
+                                                            {getEnumDisplayName(t)}
+                                                        </span>
+                                                    ))}
+                                                    {q.topics.length > 2 && (
+                                                        <span className="text-xs text-gray-400">+{q.topics.length - 2} more</span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </li>
@@ -279,14 +282,14 @@ export default function AdminQuestionsPage() {
 
                             {selected && editing && (
                                 <div className="xl:col-span-3 h-full min-h-0">
-                                    <div className="bg-gray-800 border border-gray-700 rounded-lg p-6 flex flex-col h-full">
-                                        <h2 className="text-lg font-semibold text-gray-100 mb-4 flex-shrink-0">Edit Question</h2>
+                                    <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6 flex flex-col h-full">
+                                        <h2 className="text-xl font-semibold text-gray-100 mb-5 flex-shrink-0">Edit Question</h2>
 
                                         <div className="overflow-y-auto flex-1 space-y-4 min-h-0 max-h-full">
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-200 mb-1">Title</label>
+                                                <label className="block text-sm font-medium text-gray-300 mb-2">Title</label>
                                                 <input
-                                                    className="w-full bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500"
+                                                    className="w-full bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                                                     value={editing.title || ''}
                                                     onChange={(e) => setEditing({ ...editing, title: e.target.value })}
                                                     disabled={busy}
@@ -294,9 +297,9 @@ export default function AdminQuestionsPage() {
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-200 mb-1">Description</label>
+                                                <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
                                                 <textarea
-                                                    className="w-full bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500 min-h-[200px]"
+                                                    className="w-full bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 min-h-[200px]"
                                                     value={editing.description || ''}
                                                     onChange={(e) => setEditing({ ...editing, description: e.target.value })}
                                                     disabled={busy}
@@ -304,9 +307,9 @@ export default function AdminQuestionsPage() {
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-200 mb-1">Difficulty</label>
+                                                <label className="block text-sm font-medium text-gray-300 mb-2">Difficulty</label>
                                                 <select
-                                                    className="w-full bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500"
+                                                    className="w-full bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                                                     value={editing.difficulty}
                                                     onChange={(e) => setEditing({ ...editing, difficulty: e.target.value.valueOf() as Difficulty })}
                                                     disabled={busy}
@@ -318,16 +321,16 @@ export default function AdminQuestionsPage() {
                                             </div>
 
                                             <div>
-                                                <label className="block text-sm font-medium text-gray-200 mb-2">Topics</label>
-                                                <div className="grid grid-cols-2 gap-2">
+                                                <label className="block text-sm font-medium text-gray-300 mb-2">Topics</label>
+                                                <div className="grid grid-cols-2 gap-2 bg-gray-800 rounded-lg p-4 border border-gray-600">
                                                     {Object.values(Topic).map((value) => (
-                                                        <label key={value} className="flex items-center space-x-2">
+                                                        <label key={value} className="flex items-center space-x-2 cursor-pointer">
                                                             <input
                                                                 type="checkbox"
                                                                 checked={editing.topics.includes(value)}
                                                                 onChange={() => toggleTopicSelection(value)}
                                                                 disabled={busy}
-                                                                className="rounded border-gray-500"
+                                                                className="rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500"
                                                             />
                                                             <span className="text-sm text-gray-200">{getEnumDisplayName(value)}</span>
                                                         </label>
@@ -335,12 +338,12 @@ export default function AdminQuestionsPage() {
                                                 </div>
                                             </div>
 
-                                            <div className="mt-6">
+                                            <div className="mt-6 pt-4 border-t border-gray-700">
                                                 <div className="flex items-center gap-3 mb-3">
                                                     <button
                                                         onClick={handleUpdate}
                                                         disabled={busy}
-                                                        className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
                                                     >
                                                         {busy ? 'Saving…' : 'Save Changes'}
                                                     </button>
@@ -348,27 +351,27 @@ export default function AdminQuestionsPage() {
                                                         <button
                                                             onClick={() => setShowDeleteConfirm(true)}
                                                             disabled={busy}
-                                                            className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                            className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
                                                         >
                                                             Delete Question
                                                         </button>
                                                     )}
                                                 </div>
                                                 {showDeleteConfirm && (
-                                                    <div className="bg-red-900/20 border border-red-600 rounded-lg p-3">
-                                                        <p className="text-red-300 mb-3 text-sm">Are you sure you want to delete this question? This action cannot be undone.</p>
+                                                    <div className="bg-red-900/30 border border-red-600 rounded-lg p-4">
+                                                        <p className="text-red-300 mb-3">Are you sure you want to delete this question? This action cannot be undone.</p>
                                                         <div className="flex items-center gap-3">
                                                             <button
                                                                 onClick={handleDelete}
                                                                 disabled={busy}
-                                                                className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                                className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
                                                             >
                                                                 {busy ? 'Deleting…' : 'Yes, Delete'}
                                                             </button>
                                                             <button
                                                                 onClick={() => setShowDeleteConfirm(false)}
                                                                 disabled={busy}
-                                                                className="border border-gray-500 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                                className="border border-gray-600 hover:bg-gray-700 text-gray-200 px-5 py-2.5 rounded-lg font-medium transition-colors"
                                                             >
                                                                 Cancel
                                                             </button>
@@ -383,6 +386,17 @@ export default function AdminQuestionsPage() {
                         </div>
                     )}
 
+                    {/* Empty State */}
+                    {!loading && results.length === 0 && !error && (
+                        <div className="flex-1 flex items-center justify-center">
+                            <div className="text-center">
+                                <div className="text-6xl mb-4">🔍</div>
+                                <h3 className="text-xl font-semibold text-gray-100 mb-2">Search for Questions</h3>
+                                <p className="text-gray-400">Use the filters above to find questions to manage</p>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Create Question Modal */}
                     {showCreateForm && (
                         <div
@@ -390,21 +404,21 @@ export default function AdminQuestionsPage() {
                             onClick={() => setShowCreateForm(false)}
                         >
                             <div
-                                className="bg-gray-800 border border-gray-700 rounded-lg p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto"
+                                className="bg-gray-800 border border-gray-700 rounded-xl p-6 w-full max-w-2xl max-h-[80vh] overflow-y-auto"
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                <h2 className="text-lg font-semibold text-gray-100 mb-4">Create New Question</h2>
+                                <h2 className="text-xl font-semibold text-gray-100 mb-5">Create New Question</h2>
                                 {error && (
-                                    <div className="mb-6 bg-red-900 border border-red-700 rounded-md p-4 flex-shrink-0">
-                                        <p className="text-sm text-red-200">{error}</p>
+                                    <div className="mb-6 bg-red-900/50 border border-red-700 rounded-lg p-4 flex-shrink-0">
+                                        <p className="text-red-200">{error}</p>
                                     </div>
                                 )}
 
                                 <div className="space-y-4">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-200 mb-1">Title *</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Title *</label>
                                         <input
-                                            className="w-full bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500"
+                                            className="w-full bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                                             value={newQuestion.title}
                                             onChange={(e) => setNewQuestion({ ...newQuestion, title: e.target.value })}
                                             disabled={busy}
@@ -412,9 +426,9 @@ export default function AdminQuestionsPage() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-200 mb-1">Description *</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Description *</label>
                                         <textarea
-                                            className="w-full bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500 min-h-[200px]"
+                                            className="w-full bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 min-h-[200px]"
                                             value={newQuestion.description}
                                             onChange={(e) => setNewQuestion({ ...newQuestion, description: e.target.value })}
                                             disabled={busy}
@@ -422,9 +436,9 @@ export default function AdminQuestionsPage() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-200 mb-1">Difficulty *</label>
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Difficulty *</label>
                                         <select
-                                            className="w-full bg-gray-100 text-black rounded-md px-3 py-2 border border-gray-500"
+                                            className="w-full bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                                             value={newQuestion.difficulty}
                                             onChange={(e) => setNewQuestion({ ...newQuestion, difficulty: e.target.value as Difficulty })}
                                             disabled={busy}
@@ -436,16 +450,16 @@ export default function AdminQuestionsPage() {
                                     </div>
 
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-200 mb-2">Topics * (select at least one)</label>
-                                        <div className="grid grid-cols-2 gap-2">
+                                        <label className="block text-sm font-medium text-gray-300 mb-2">Topics * (select at least one)</label>
+                                        <div className="grid grid-cols-2 gap-2 bg-gray-800 rounded-lg p-4 border border-gray-600">
                                             {Object.values(Topic).map((value) => (
-                                                <label key={value} className="flex items-center space-x-2">
+                                                <label key={value} className="flex items-center space-x-2 cursor-pointer">
                                                     <input
                                                         type="checkbox"
                                                         checked={newQuestion.topics.includes(value as Topic)}
                                                         onChange={() => toggleTopicSelection(value as Topic, true)}
                                                         disabled={busy}
-                                                        className="rounded border-gray-500"
+                                                        className="rounded border-gray-500 bg-gray-700 text-blue-500 focus:ring-blue-500"
                                                     />
                                                     <span className="text-sm text-gray-200">{getEnumDisplayName(value)}</span>
                                                 </label>
@@ -454,18 +468,18 @@ export default function AdminQuestionsPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex items-center gap-3 mt-6">
+                                <div className="flex items-center gap-3 mt-6 pt-4 border-t border-gray-700">
                                     <button
                                         onClick={handleCreate}
                                         disabled={busy}
-                                        className="bg-green-500 hover:bg-green-600 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                        className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
                                     >
                                         {busy ? 'Creating…' : 'Create Question'}
                                     </button>
                                     <button
                                         onClick={() => setShowCreateForm(false)}
                                         disabled={busy}
-                                        className="border border-gray-500 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                        className="border border-gray-600 hover:bg-gray-700 text-gray-200 px-5 py-2.5 rounded-lg font-medium transition-colors"
                                     >
                                         Cancel
                                     </button>
