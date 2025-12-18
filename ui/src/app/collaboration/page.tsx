@@ -275,143 +275,148 @@ export default function CollaborationPage() {
             {/* Main Content - Split Panel */}
             <div className="flex-1 flex overflow-hidden">
                 {/* Left Panel - Question & Chat */}
-                <div className="w-1/2 flex flex-col border-r border-gray-700">
+                <div className="w-1/2 flex flex-col border-r border-gray-700 p-4 gap-4">
                     {/* Question Section */}
-                    <div className="flex-shrink-0 p-6 border-b border-gray-700 overflow-y-auto max-h-[50vh]">
-                        <div className="mb-4">
-                            <h2 className="text-2xl font-bold text-gray-100 mb-3">
-                                {question?.title || "Loading question..."}
-                            </h2>
-                            <div className="flex items-center gap-3 mb-4">
-                                <span className={`text-xs px-2 py-0.5 rounded-full border ${question?.difficulty === Difficulty.EASY ? 'bg-green-600/30 border-green-500 text-green-200' :
-                                    question?.difficulty === Difficulty.MEDIUM ? 'bg-yellow-600/30 border-yellow-500 text-yellow-200' :
-                                        'bg-red-600/30 border-red-500 text-red-200'
-                                    }`}>
-                                    {getEnumDisplayName(question?.difficulty || "UNKNOWN")}
-                                </span>
-                                {question?.topics && question.topics.length > 0 && (
-                                    <div className="flex gap-2">
-                                        {question.topics.map((topic, idx) => (
-                                            <span
-                                                key={idx}
-                                                className="text-xs px-2 py-0.5 rounded-full bg-blue-600/30 border-blue-500 text-blue-200 border"
-                                            >
-                                                {getEnumDisplayName(topic)}
-                                            </span>
-                                        ))}
-                                    </div>
-                                )}
+                    <div className="flex-shrink-0 overflow-y-auto max-h-[50vh] bg-gray-800 rounded-lg border border-gray-700">
+                        <div className="p-5">
+                            <div className="mb-4">
+                                <h2 className="text-2xl font-bold text-gray-100 mb-3">
+                                    {question?.title || "Loading question..."}
+                                </h2>
+                                <div className="flex items-center gap-3 mb-4">
+                                    <span className={`text-xs px-2 py-0.5 rounded-full border ${question?.difficulty === Difficulty.EASY ? 'bg-green-600/30 border-green-500 text-green-200' :
+                                        question?.difficulty === Difficulty.MEDIUM ? 'bg-yellow-600/30 border-yellow-500 text-yellow-200' :
+                                            'bg-red-600/30 border-red-500 text-red-200'
+                                        }`}>
+                                        {getEnumDisplayName(question?.difficulty || "UNKNOWN")}
+                                    </span>
+                                    {question?.topics && question.topics.length > 0 && (
+                                        <div className="flex gap-2">
+                                            {question.topics.map((topic, idx) => (
+                                                <span
+                                                    key={idx}
+                                                    className="text-xs px-2 py-0.5 rounded-full bg-blue-600/30 border-blue-500 text-blue-200 border"
+                                                >
+                                                    {getEnumDisplayName(topic)}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
                             </div>
-                        </div>
-                        <div className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
-                            {question?.description}
+                            <div className="text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
+                                {question?.description}
+                            </div>
                         </div>
                     </div>
 
                     {/* Chat Section */}
-                    <div className="flex-1 flex flex-col bg-gray-850 min-h-0">
-                        <div className="px-4 py-3 border-b border-gray-700 flex-shrink-0">
-                            <h3 className="text-lg font-semibold text-gray-100">Chat</h3>
-                        </div>
+                    <div className="flex-1 flex flex-col min-h-0">
+                        <div className="flex-1 flex flex-col bg-gray-800 rounded-lg border border-gray-700 overflow-hidden min-h-0">
+                            <div className="px-4 py-2.5 bg-gray-800/50 flex-shrink-0">
+                                <h3 className="text-md font-semibold text-gray-200">Chat</h3>
+                            </div>
 
-                        {/* Chat Messages */}
-                        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2 min-h-0">
-                            {chat.length === 0 ? (
-                                <p className="text-gray-500 text-sm text-center py-8">
-                                    No messages yet. Start chatting!
-                                </p>
-                            ) : (
-                                chat.map((msg, idx) => (
-                                    <div
-                                        key={idx}
-                                        className={`flex ${msg.sender === user?.displayName ? 'justify-end' : 'justify-start'}`}
-                                    >
+                            {/* Chat Messages */}
+                            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-2 min-h-0 bg-gray-850">
+                                {chat.length === 0 ? (
+                                    <p className="text-gray-500 text-sm text-center py-8">
+                                        No messages yet. Start chatting!
+                                    </p>
+                                ) : (
+                                    chat.map((msg, idx) => (
                                         <div
-                                            className={`max-w-[80%] rounded-lg px-3 py-2 ${msg.sender === user?.displayName
-                                                ? 'bg-blue-600 text-white'
-                                                : 'bg-gray-700 text-gray-100'
-                                                }`}
+                                            key={idx}
+                                            className={`flex ${msg.sender === user?.displayName ? 'justify-end' : 'justify-start'}`}
                                         >
-                                            <p className="text-xs font-semibold mb-1 opacity-75">
-                                                {msg.sender}
-                                            </p>
-                                            <p className="text-sm break-words">{msg.content}</p>
+                                            <div
+                                                className={`max-w-[80%] rounded-lg px-3 py-2 ${msg.sender === user?.displayName
+                                                    ? 'bg-blue-600 text-white'
+                                                    : 'bg-gray-700 text-gray-100'
+                                                    }`}
+                                            >
+                                                <p className="text-xs font-semibold mb-1 opacity-75">
+                                                    {msg.sender}
+                                                </p>
+                                                <p className="text-sm break-words">{msg.content}</p>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))
-                            )}
-                            <div ref={chatEndRef} />
-                        </div>
+                                    ))
+                                )}
+                                <div ref={chatEndRef} />
+                            </div>
 
-                        {/* Chat Input */}
-                        <div className="px-4 py-3 border-t border-gray-700 flex-shrink-0">
-                            <div className="flex gap-2">
-                                <input
-                                    type="text"
-                                    value={chatInput}
-                                    onChange={(e) => setChatInput(e.target.value)}
-                                    onKeyDown={(e) => {
-                                        if (e.key === "Enter" && chatInput.trim() !== "") {
-                                            handleSendMessage();
-                                        }
-                                    }}
-                                    placeholder="Type a message..."
-                                    className="flex-1 bg-gray-700 text-gray-100 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
-                                />
-                                <button
-                                    onClick={handleSendMessage}
-                                    disabled={!chatInput.trim()}
-                                    className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                                >
-                                    Send
-                                </button>
+                            {/* Chat Input */}
+                            <div className="px-4 py-3 bg-gray-800/50 flex-shrink-0">
+                                <div className="flex gap-2">
+                                    <input
+                                        type="text"
+                                        value={chatInput}
+                                        onChange={(e) => setChatInput(e.target.value)}
+                                        onKeyDown={(e) => {
+                                            if (e.key === "Enter" && chatInput.trim() !== "") {
+                                                handleSendMessage();
+                                            }
+                                        }}
+                                        placeholder="Type a message..."
+                                        className="flex-1 bg-gray-700 text-gray-100 border border-gray-600 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent placeholder-gray-400"
+                                    />
+                                    <button
+                                        onClick={handleSendMessage}
+                                        disabled={!chatInput.trim()}
+                                        className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                    >
+                                        Send
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Right Panel - Code Editor & Output */}
-                <div className="w-1/2 flex flex-col">
-                    {/* Code Editor Header */}
-                    <div className="bg-gray-800 border-b border-gray-700 px-4 py-2 flex-shrink-0">
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-gray-400">Language:</span>
-                            <span className="text-sm font-medium text-gray-200">
+                <div className="w-1/2 flex flex-col p-4 gap-4">
+                    {/* Code Editor Card */}
+                    <div className="flex-1 flex flex-col bg-gray-800 rounded-lg border border-gray-700 overflow-hidden min-h-0">
+                        {/* Code Editor Header */}
+                        <div className="bg-gray-800/50 px-4 py-2.5 flex-shrink-0">
+                            <h3 className="text-md font-semibold text-gray-200">
                                 {getLanguageDisplayName(matchedUser?.language || "UNKNOWN")}
-                            </span>
+                            </h3>
+                        </div>
+
+                        {/* Code Editor */}
+                        <div className="flex-1 relative">
+                            {docRef.current && <Editor
+                                height="100%"
+                                defaultLanguage={matchedUser?.language.toLowerCase()}
+                                theme="vs-dark"
+                                onMount={(editor) => {
+                                    new MonacoBinding(
+                                        docRef.current!.getText("code"),
+                                        editor.getModel()!,
+                                        new Set([editor]),
+                                        null
+                                    );
+                                }}
+                                options={{
+                                    automaticLayout: true,
+                                    fontSize: 14,
+                                    minimap: { enabled: false },
+                                    scrollBeyondLastLine: false,
+                                }}
+                            />}
                         </div>
                     </div>
 
-                    {/* Code Editor */}
-                    <div className="flex-1 relative">
-                        {docRef.current && <Editor
-                            height="100%"
-                            defaultLanguage={matchedUser?.language.toLowerCase()}
-                            theme="vs-dark"
-                            onMount={(editor) => {
-                                new MonacoBinding(
-                                    docRef.current!.getText("code"),
-                                    editor.getModel()!,
-                                    new Set([editor]),
-                                    null
-                                );
-                            }}
-                            options={{
-                                automaticLayout: true,
-                                fontSize: 14,
-                                minimap: { enabled: false },
-                                scrollBeyondLastLine: false,
-                            }}
-                        />}
-                    </div>
-
-                    {/* Run Button & Output */}
-                    <div className="flex-shrink-0 border-t border-gray-700">
-                        <div className="px-4 py-3 bg-gray-800 border-b border-gray-700">
+                    {/* Run & Output Card */}
+                    <div className="flex-shrink-0 bg-gray-800 rounded-lg border border-gray-700 overflow-hidden">
+                        <div className="px-4 py-2.5 bg-gray-800/50 flex items-center justify-between">
+                            <h3 className="text-md font-semibold text-gray-200">Output</h3>
                             <button
                                 onClick={handleRunCode}
                                 disabled={isRunning}
-                                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
+                                className="bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-1.5 rounded-md text-sm font-medium transition-colors flex items-center gap-2"
                             >
                                 {isRunning ? (
                                     <>
@@ -425,8 +430,7 @@ export default function CollaborationPage() {
                         </div>
 
                         {/* Output Section */}
-                        <div className="px-4 py-3 bg-gray-900 h-48 overflow-y-auto">
-                            <h4 className="text-sm font-semibold text-gray-300 mb-2">Output:</h4>
+                        <div className="px-4 py-3 bg-gray-900 h-40 overflow-y-auto">
                             <pre className="text-sm text-gray-300 font-mono whitespace-pre-wrap">
                                 {output || "Click 'Run Code' to see output"}
                             </pre>
