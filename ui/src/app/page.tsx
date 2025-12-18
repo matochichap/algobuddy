@@ -21,7 +21,7 @@ export default function Home() {
           {/* Hero Section - Compact */}
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold text-gray-100 mb-3">
-              {user?.displayName ? `Welcome back, ${user.displayName}! 👋` : "Welcome back! 👋"}
+              {user?.displayName ? `Welcome back, ${user.displayName}!` : "Welcome back!"}
             </h1>
             <div className="flex items-center justify-center gap-3 text-base text-gray-400">
               {lastLogin && (
