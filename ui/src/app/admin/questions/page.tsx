@@ -184,7 +184,7 @@ export default function AdminQuestionsPage() {
             <Header />
             <div className="h-[calc(100vh-4rem)] bg-gray-900 py-6 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 h-full flex flex-col">
-                    <div className="flex justify-between items-center mb-6 flex-shrink-0">
+                    <div className="flex justify-between items-center mb-4 flex-shrink-0 h-12">
                         <h1 className="text-2xl font-bold text-gray-100">Manage Questions</h1>
                         <button
                             onClick={() => {
@@ -192,7 +192,7 @@ export default function AdminQuestionsPage() {
                                 setError(null);
                             }}
                             disabled={loading || busy}
-                            className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
+                            className="bg-green-600 hover:bg-green-700 disabled:opacity-50 text-white px-5 py-2.5 text-sm rounded-lg font-medium transition-colors"
                         >
                             Create Question
                         </button>
@@ -203,13 +203,13 @@ export default function AdminQuestionsPage() {
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Search by title..."
-                            className="flex-1 min-w-[200px] bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
+                            className="flex-1 min-w-[200px] bg-gray-800 text-gray-100 rounded-lg pl-4 px-2 py-3 text-sm border border-gray-600 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
                             disabled={loading || busy}
                         />
                         <select
                             value={topic}
                             onChange={(e) => setTopic(e.target.value)}
-                            className="bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                            className="bg-gray-800 text-gray-100 rounded-lg w-48 px-2 py-3 text-sm border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading || busy}
                         >
                             <option value="">All Topics</option>
@@ -220,7 +220,7 @@ export default function AdminQuestionsPage() {
                         <select
                             value={difficulty}
                             onChange={(e) => setDifficulty(e.target.value)}
-                            className="bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                            className="bg-gray-800 text-gray-100 rounded-lg w-48 px-2 py-3 text-sm border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading || busy}
                         >
                             <option value="">All Difficulties</option>
@@ -231,7 +231,7 @@ export default function AdminQuestionsPage() {
                         <button
                             type="submit"
                             disabled={loading || busy}
-                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-lg font-medium transition-colors"
+                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-1.5 text-sm rounded-lg font-medium transition-colors"
                         >
                             {loading ? 'Searching…' : 'Search'}
                         </button>
@@ -343,7 +343,7 @@ export default function AdminQuestionsPage() {
                                                     <button
                                                         onClick={handleUpdate}
                                                         disabled={busy}
-                                                        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
+                                                        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-5 py-2.5 text-sm rounded-lg font-medium transition-colors"
                                                     >
                                                         {busy ? 'Saving…' : 'Save Changes'}
                                                     </button>
@@ -351,27 +351,27 @@ export default function AdminQuestionsPage() {
                                                         <button
                                                             onClick={() => setShowDeleteConfirm(true)}
                                                             disabled={busy}
-                                                            className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
+                                                            className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-5 py-2.5 text-sm rounded-lg font-medium transition-colors"
                                                         >
                                                             Delete Question
                                                         </button>
                                                     )}
                                                 </div>
                                                 {showDeleteConfirm && (
-                                                    <div className="bg-red-900/30 border border-red-600 rounded-lg p-4">
+                                                    <div className="bg-red-900/30 border border-red-600 rounded-lg p-4 text-sm">
                                                         <p className="text-red-300 mb-3">Are you sure you want to delete this question? This action cannot be undone.</p>
                                                         <div className="flex items-center gap-3">
                                                             <button
                                                                 onClick={handleDelete}
                                                                 disabled={busy}
-                                                                className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-5 py-2.5 rounded-lg font-medium transition-colors"
+                                                                className="bg-red-600 hover:bg-red-700 disabled:opacity-50 text-white px-5 py-2.5 text-sm rounded-lg font-medium transition-colors"
                                                             >
                                                                 {busy ? 'Deleting…' : 'Yes, Delete'}
                                                             </button>
                                                             <button
                                                                 onClick={() => setShowDeleteConfirm(false)}
                                                                 disabled={busy}
-                                                                className="border border-gray-600 hover:bg-gray-700 text-gray-200 px-5 py-2.5 rounded-lg font-medium transition-colors"
+                                                                className="border border-gray-600 hover:bg-gray-700 text-gray-200 px-5 py-2.5 text-sm rounded-lg font-medium transition-colors"
                                                             >
                                                                 Cancel
                                                             </button>
@@ -388,7 +388,7 @@ export default function AdminQuestionsPage() {
 
                     {/* Empty State */}
                     {!loading && results.length === 0 && !error && (
-                        <div className="flex-1 flex items-center justify-center">
+                        <div className="flex-1 flex items-center justify-center border border-gray-700 rounded-xl">
                             <div className="text-center">
                                 <div className="text-6xl mb-4">🔍</div>
                                 <h3 className="text-xl font-semibold text-gray-100 mb-2">Search for Questions</h3>

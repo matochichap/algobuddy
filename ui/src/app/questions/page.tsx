@@ -69,20 +69,22 @@ export default function QuestionsPage() {
             <Header />
             <div className="h-[calc(100vh-4rem)] bg-gray-900 py-6 overflow-hidden">
                 <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 h-full flex flex-col">
-                    <h1 className="text-2xl font-bold text-gray-100 mb-6 flex-shrink-0">Browse Questions</h1>
+                    <div className="flex justify-between items-center mb-4 flex-shrink-0 h-12">
+                        <h1 className="text-2xl font-bold text-gray-100">Browse Questions</h1>
+                    </div>
 
                     <form onSubmit={handleSearch} className="flex flex-wrap gap-3 mb-6 flex-shrink-0">
                         <input
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Search by title..."
-                            className="flex-1 min-w-[200px] bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
+                            className="flex-1 min-w-[200px] bg-gray-800 text-gray-100 rounded-lg pl-4 px-2 py-3 text-sm border border-gray-600 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-400"
                             disabled={loading}
                         />
                         <select
                             value={topic}
                             onChange={(e) => setTopic(e.target.value)}
-                            className="bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                            className="bg-gray-800 text-gray-100 rounded-lg w-48 px-2 py-3 text-sm border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading}
                         >
                             <option value="">All Topics</option>
@@ -93,7 +95,7 @@ export default function QuestionsPage() {
                         <select
                             value={difficulty}
                             onChange={(e) => setDifficulty(e.target.value)}
-                            className="bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
+                            className="bg-gray-800 text-gray-100 rounded-lg w-48 px-2 py-3 text-sm border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                             disabled={loading}
                         >
                             <option value="">All Difficulties</option>
@@ -104,7 +106,7 @@ export default function QuestionsPage() {
                         <button
                             type="submit"
                             disabled={loading}
-                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-lg font-medium transition-colors"
+                            className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-1.5 text-sm rounded-lg font-medium transition-colors"
                         >
                             {loading ? 'Searching…' : 'Search'}
                         </button>
@@ -194,7 +196,7 @@ export default function QuestionsPage() {
 
                     {/* Empty State */}
                     {!loading && results.length === 0 && !error && (
-                        <div className="flex-1 flex items-center justify-center">
+                        <div className="flex-1 flex items-center justify-center border border-gray-700 rounded-xl">
                             <div className="text-center">
                                 <div className="text-6xl mb-4">🔍</div>
                                 <h3 className="text-xl font-semibold text-gray-100 mb-2">Search for Questions</h3>
