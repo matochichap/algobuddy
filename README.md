@@ -1,199 +1,113 @@
-## Overview
-AlgoBuddy is a collaborative technical interview preparation platform that enables users to practice coding questions together in real-time. The application uses a microservices architecture to provide user authentication, question management, peer matching, and real-time collaboration features.
+# Overview
+AlgoBuddy is a collaborative technical interview preparation platform that enables users to practice coding questions together in real-time. 
 
-## Architecture and Dependencies
+## Architecture
 
 ### Microservices Architecture
 - **API Gateway** - Entry point for all client requests, handles routing and JWT authentication
 - **User Service** - Manages user authentication, profiles, and sessions using Google OAuth
 - **Question Service** - Handles CRUD operations for coding questions
-- **Matching Service** - WebSocket-based service for real-time peer matching
-- **Collaboration Service** - Enables real-time collaborative coding sessions
+- **Matching Service** - WebSocket based service for real-time peer matching
+- **Collaboration Service** - Websocket based service for real-time collaborative coding sessions
 - **UI** - Next.js frontend application
 - **Shared** - Common TypeScript types and interfaces shared across services
 
 ### Technology Stack
-- **Runtime**: Node.js with TypeScript
-- **Web Framework**: Express.js
+- **Runtime**: Node
+- **Web Framework**: Express
+- **Websocket**: Socket.IO
 - **Frontend**: Next.js
 - **Databases**: MongoDB, Redis
 - **ORM**: Prisma
-- **Real-time Communication**: Socket.IO
 - **Authentication**: JWT tokens with Google OAuth 2.0
-- **API Gateway**: http-proxy-middleware with express-jwt
 - **Containerization**: Docker
 
-## Environment Variables
+# Development
 
-Copy `.env.example` to `.env` and configure the following variables:
+### Environment Variables
 
-### Service Ports
+Refer to `.env.example` for all required environment variables for local development and production deployment.
+
+## Local Development Setup
+1. The following sets up and runs all services locally with hot reload for development
 ```bash
-UI_PORT=3000                          # Frontend Next.js application port
-USER_SERVICE_PORT=3001                # User authentication service port
-MATCHING_SERVICE_PORT=3002            # Peer matching service port
-QUESTION_SERVICE_PORT=3003            # Question management service port
-COLLABORATION_SERVICE_PORT=3004       # Real-time collaboration service port
-API_GATEWAY_PORT=4000                 # API Gateway port (main entry point)
+npm install -g yarn
+git clone <repository-url>
+cp .env.example .env # Edit .env with your configuration
+
+# Start services individually for development with hot reload
+yarn --cwd api-gateway shared; yarn --cwd api-gateway install; yarn --cwd api-gateway dev
+yarn --cwd user-service shared; yarn --cwd user-service install; yarn --cwd user-service dev
+yarn --cwd question-service shared; yarn --cwd question-service install; yarn --cwd question-service dev
+yarn --cwd matching-service shared; yarn --cwd matching-service install; yarn --cwd matching-service dev
+yarn --cwd collaboration-service shared; yarn --cwd collaboration-service install; yarn --cwd collaboration-service dev
+yarn --cwd ui shared; yarn --cwd ui install; yarn --cwd ui dev
+```
+2. If local MongoDB or Redis instances are needed for development, run the following commands in a separate terminal
+```bash
+cd db
+docker compose up
+```
+3. Go to http://localhost:4000
+
+### MongoDB commands
+To run the mongo shell to connect to the local MongoDB server, run the following command in a separate terminal:
+
+```
+docker exec -it mongo mongosh
 ```
 
-### Service Base URLs
-```bash
-UI_BASE_URL=http://localhost:3000                     # Frontend URL
-USER_SERVICE_BASE_URL=http://localhost:3001           # User service internal URL
-MATCHING_SERVICE_BASE_URL=http://localhost:3002       # Matching service internal URL
-QUESTION_SERVICE_BASE_URL=http://localhost:3003       # Question service internal URL
-COLLABORATION_SERVICE_BASE_URL=http://localhost:3004  # Collaboration service internal URL
-API_GATEWAY_BASE_URL=http://localhost:4000            # API Gateway URL for clients
+To set an admin user in mongosh, run the following command:
+
+```
+db.User.updateOne( { email: "<USER_EMAIL>" }, { $set: { role: "ADMIN" } })
 ```
 
-### Redis Configuration
-```bash
-REDIS_HOST=localhost                  # Redis host (use "redis" for docker)
-REDIS_PORT=6379                       # Redis port
-REDIS_PASSWORD=password               # Redis password
+### Redis commands
+To run the redis-cli to connect to the local Redis server, run the following command in a separate terminal:
+
+```
+docker exec -it redis redis-cli -a <REDIS_PASSWORD>
 ```
 
-### JWT Secrets
-```bash
-JWT_ACCESS_SECRET=<your-secret-key>   # Secret for signing JWT access tokens
-JWT_REFRESH_SECRET=<your-secret-key>  # Secret for signing JWT refresh tokens
-```
-
-**Note**: Generate strong random secrets for JWT tokens in production.
-
-## Installation and Setup
-
-### Prerequisites
-- Node.js (v18 or higher)
-- Yarn package manager
-- Docker
-- MongoDB instance (local)
-- Redis instance (local)
-- Google OAuth 2.0 credentials
-
-### Local Development Setup
-
-1. **Install Yarn globally** (if not already installed):
-   ```bash
-   npm install -g yarn
-   ```
-
-2. **Clone the repository**:
-   ```bash
-   git clone <repository-url>
-   ```
-
-3. **Set up environment variables**:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-4. **Build and install shared package** (required first):
-   ```bash
-   cd shared
-   yarn install
-   yarn build
-   cd ..
-   ```
-
-5. **Install dependencies for each service**:
-   ```bash
-   # Run this in each service directory
-   cd api-gateway && yarn shared && yarn install && cd ..
-   cd user-service && yarn shared && yarn install && cd ..
-   cd question-service && yarn shared && yarn install && cd ..
-   cd matching-service && yarn shared && yarn install && cd ..
-   cd collaboration-service && yarn shared && yarn install && cd ..
-   cd ui && yarn shared && yarn install && cd ..
-   ```
-
-6. **Set up databases**:
-   - Start MongoDB and Redis (see `db/README.md` for Docker setup)
-   - Configure connection strings in each service's `.env` file
-
-7. **Run Prisma migrations** (for User and Question services):
-   ```bash
-   cd user-service && npx prisma generate && npx prisma db push && cd ..
-   cd question-service && npx prisma generate && npx prisma db push && cd ..
-   ```
-
-8. **Run for development**:
-   ```bash
-   # In each service directory
-   yarn dev
-   ```
-
-9. **Build for production**:
-   ```bash
-   # In each service directory
-   yarn shared
-   yarn install
-   yarn build
-   yarn start
-   ```
-
-## Running with Docker
-
-Docker Compose provides an easy way to run all services together with their dependencies.
-
-### Quick Start
-
-1. **Configure environment variables**:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-2. **Build and start all services**:
-   ```bash
-   docker compose build --no-cache
-   docker compose up
-   ```
-
-3. **Access the application**:
-   - Frontend: http://localhost:3000
-   - API Gateway: http://localhost:4000
+Replace `<REDIS_PASSWORD>` with the password set in the `.env` file.
 
 ## Development Notes
+- The shared folder is a package containing shared types and interfaces used across all services, it is a necessary dependency for all services
+- Run `yarn shared` in all services after making changes to the shared package
+- In the API Gateway, user information is extracted from JWT and passed via headers (`x-user-id`, `x-user-role`)
 
-- **Hot Reload**: Not supported when running with Docker. For hot reload during development, run services individually as described in their respective `README.md` files.
-- **Service Independence**: Each microservice can be developed and tested independently. Navigate to the respective service folder and follow the instructions in its `README.md`.
-- **Shared Package**: After making changes to the `shared` package, you must rebuild it and update all services:
-  ```bash
-  # In each service directory:
-  yarn shared
-  ```
-- **Database Migrations**: When modifying Prisma schemas, run migrations in the respective service directory:
-  ```bash
-  npx prisma generate
-  npx prisma db push
-  ```
+# Deployment
+- Containerised deployment for local and cloud environments
 
-## Service Documentation
+## Local Deployment
 
-Each microservice has its own detailed `README.md` file with specific setup instructions:
+### Option 1 - Local DB Docker instance
+- If you don't have a cloud MongoDB or Redis instance, you can use this setup and configure `.env.production.local`
 
-- [API Gateway](./api-gateway/README.md) - Request routing and authentication
-- [User Service](./user-service/README.md) - User authentication and management
-- [Question Service](./question-service/README.md) - Question CRUD operations
-- [Matching Service](./matching-service/README.md) - Real-time peer matching
-- [Collaboration Service](./collaboration-service/README.md) - Real-time collaborative coding
-- [UI](./ui/README.md) - Frontend application
-- [Shared](./shared/README.md) - Shared types and utilities
-- [Database](./db/README.md) - Database setup and configuration
+```bash
+cp .env.example .env.production.local # Edit .env with your configuration
+docker compose build --no-cache # create docker images
+docker compose -f docker-compose.local.yml up # create containers for local MongoDB and Redis
+```
 
-## Troubleshooting
+### Option 2 - Cloud DB instance
+- If you have a cloud MongoDB or Redis instance, ensure your `.env.production` is configured correctly
+```bash
+cp .env.example .env.production # Edit .env with your configuration
+docker compose build --no-cache
+docker compose up
+```
 
-### Common Issues
+## Cloud Deployment
+- GCP Cloud Run was used for deployment
+- There is a cloudbuild.yaml file for GCP Cloud Build to automate builds and deployments for each microservice
+- All containers are connected using Direct VPC and set to private except for API Gateway which is the public entry point
 
-1. **Port conflicts**: Ensure the ports specified in `.env` are not in use by other applications.
-2. **Database connection errors**: Verify MongoDB and Redis are running and connection strings are correct.
-3. **JWT errors**: Ensure `JWT_ACCESS_SECRET` and `JWT_REFRESH_SECRET` are set in `.env`.
-4. **Shared package issues**: If services fail to start, rebuild the shared package: `cd shared && yarn build && cd .. && cd <service> && yarn shared`.
-5. **Docker issues**: Clear Docker cache with `docker system prune -a` if builds fail.
-
-### Note
-- Individual microservices are developed within separate folders within this repository.
-- The teaching team has been given access to the repository for history review in case of any disputes or disagreements. 
+## Deployment Notes
+### Single Origin Deployment
+- UI sits behind the API Gateway for unified origin for cookies to be stored properly (iOS devices have strict cookie policies for cross-origin requests)
+- It is possible setup UI and API Gateway behind an external load balancer, but this adds additional cost to the deployment
+- This deployment was set up to minimise cost since requests rarely come in
+### Networking
+- Both local and cloud deployments use private networking between services and expose only the API Gateway
