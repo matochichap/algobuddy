@@ -48,7 +48,7 @@ export default function Home() {
               </Link>
             ) : (
               <Link href="/matching" className="group">
-                <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 hover:border-blue-500 transition-all hover:bg-gray-750 h-full">
+                <div className="bg-gray-800 rounded-xl p-8 border border-blue-500/50 hover:border-blue-500 transition-all hover:bg-gray-750 h-full">
                   <div className="text-4xl mb-4">🤝</div>
                   <h3 className="text-xl font-semibold text-gray-100 mb-3 group-hover:text-blue-400 transition-colors">Find a Match</h3>
                   <p className="text-gray-400">
