@@ -157,8 +157,8 @@ export default function Profile() {
     return (
         <>
             <Header />
-            <div className="h-[calc(100vh-4rem)] bg-gray-900 py-12 overflow-y-auto">
-                <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center">
+            <div className="min-h-[calc(100vh-4rem)] bg-gray-900 py-12 overflow-y-auto">
+                <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-center min-h-full">
                     <div className="bg-gray-800 shadow-lg rounded-lg overflow-hidden flex-col item-center w-full border border-gray-700">
                         {/* Header */}
                         <div className="bg-gradient-to-r from-gray-700 to-gray-800 px-6 py-8">
