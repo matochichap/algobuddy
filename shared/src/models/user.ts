@@ -13,6 +13,7 @@ export interface User {
     firstName?: string;
     lastName?: string;
     picture?: string;
+    image?: string;
     email?: string;
     role?: UserRole;
     lastLogin?: Date;

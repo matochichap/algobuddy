@@ -2,9 +2,10 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { useUser } from '@/contexts/UserContext';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Header from '@/components/Header';
+import UserAvatar from '@/components/UserAvatar';
 
 export default function Profile() {
     const router = useRouter();
@@ -12,19 +13,16 @@ export default function Profile() {
     const { user } = useUser();
     const [isEditing, setIsEditing] = useState(false);
     const [editedDisplayName, setEditedDisplayName] = useState('');
-    const [isEditingPicture, setIsEditingPicture] = useState(false);
-    const [editedPicture, setEditedPicture] = useState('');
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [error, setError] = useState('');
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (user?.displayName) {
             setEditedDisplayName(user.displayName);
-        }
-        if (user?.picture) {
-            setEditedPicture(user.picture);
         }
     }, [user]);
 
@@ -95,11 +93,32 @@ export default function Profile() {
         }
     };
 
-    const handleEditPicture = async () => {
-        if (!editedPicture.trim()) {
-            setError('Profile picture URL cannot be empty');
+    const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            setError('Please select an image file');
             return;
         }
+
+        // Validate file size (max 1MB)
+        if (file.size > 1 * 1024 * 1024) {
+            setError('Image must be less than 1MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setSelectedImage(event.target?.result as string);
+            setError('');
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const handleUploadImage = async () => {
+        if (!selectedImage) return;
 
         setIsSaving(true);
         setError('');
@@ -110,21 +129,20 @@ export default function Profile() {
                 {
                     method: 'PUT',
                     body: JSON.stringify({
-                        picture: editedPicture.trim(),
+                        image: selectedImage,
                     }),
                 }
             );
 
             if (!response.ok) {
-                setError('Failed to update profile picture.');
-                return;
+                throw new Error('Failed to upload image');
             }
 
-            // Refresh page to get updated user data
-            setIsEditingPicture(false);
+            setSelectedImage(null);
             window.location.reload();
         } catch (err) {
-            console.error('Update profile picture error:', err);
+            setError('Failed to upload image. Please try again.');
+            console.error('Upload image error:', err);
         } finally {
             setIsSaving(false);
         }
@@ -136,9 +154,11 @@ export default function Profile() {
         setError('');
     };
 
-    const cancelEditPicture = () => {
-        setEditedPicture(user?.picture || '');
-        setIsEditingPicture(false);
+    const cancelImageUpload = () => {
+        setSelectedImage(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
         setError('');
     };
 
@@ -165,21 +185,13 @@ export default function Profile() {
                             <div className="flex items-center">
                                 {/* Profile Picture */}
                                 <div className="flex-shrink-0">
-                                    {user.picture ? (
-                                        <Image
-                                            src={user.picture}
-                                            alt={user.displayName || "Profile Picture"}
-                                            width={80}
-                                            height={80}
-                                            className="w-20 h-20 rounded-full border-4 border-white object-cover"
-                                        />
-                                    ) : (
-                                        <div className="w-20 h-20 bg-gray-600 rounded-full border-4 border-gray-400 flex items-center justify-center">
-                                            <span className="text-2xl font-bold text-gray-200">
-                                                {user.displayName?.charAt(0).toUpperCase() || ""}
-                                            </span>
-                                        </div>
-                                    )}
+                                    <UserAvatar
+                                        image={user.image}
+                                        picture={user.picture}
+                                        displayName={user.displayName}
+                                        size="xl"
+                                        border="thick"
+                                    />
                                 </div>
 
                                 {/* User Info */}
@@ -224,7 +236,7 @@ export default function Profile() {
                                             <button
                                                 onClick={handleEditName}
                                                 disabled={isSaving || !editedDisplayName.trim()}
-                                                className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                                             >
                                                 {isSaving ? 'Saving...' : 'Save'}
                                             </button>
@@ -243,7 +255,7 @@ export default function Profile() {
                                             </span>
                                             <button
                                                 onClick={() => setIsEditing(true)}
-                                                className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
                                             >
                                                 Edit
                                             </button>
@@ -251,50 +263,67 @@ export default function Profile() {
                                     )}
                                 </div>
 
-                                {/* Profile Picture URL */}
+                                {/* Profile Picture Upload */}
                                 <div className="border border-gray-600 rounded-lg p-4 mt-4 bg-gray-700">
                                     <label className="block text-sm font-medium text-gray-200 mb-2">
-                                        Profile Picture URL
+                                        Profile Picture
                                     </label>
 
-                                    {isEditingPicture ? (
-                                        <div className="flex items-center space-x-3">
-                                            <input
-                                                type="text"
-                                                value={editedPicture}
-                                                onChange={(e) => setEditedPicture(e.target.value)}
-                                                className="text-black bg-gray-100 flex-1 border border-gray-500 rounded-md px-3 py-2 focus:ring-blue-400 focus:border-blue-400"
-                                                placeholder="Enter profile picture URL"
-                                                disabled={isSaving}
-                                            />
-                                            <button
-                                                onClick={handleEditPicture}
-                                                disabled={isSaving || !editedPicture.trim()}
-                                                className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                                            >
-                                                {isSaving ? 'Saving...' : 'Save'}
-                                            </button>
-                                            <button
-                                                onClick={cancelEditPicture}
-                                                disabled={isSaving}
-                                                className="border border-gray-500 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                                            >
-                                                Cancel
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-gray-200 truncate mr-4">
-                                                {user.picture || "No picture set"}
-                                            </span>
-                                            <button
-                                                onClick={() => setIsEditingPicture(true)}
-                                                className="bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
-                                            >
-                                                Edit
-                                            </button>
-                                        </div>
-                                    )}
+                                    <div className="space-y-3">
+                                        <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            accept="image/*"
+                                            onChange={handleImageSelect}
+                                            className="hidden"
+                                            disabled={isSaving}
+                                        />
+
+                                        {selectedImage ? (
+                                            <div className="space-y-3">
+                                                <div className="flex items-center gap-4">
+                                                    {/* Custom preview for unsaved image */}
+                                                    <Image
+                                                        src={selectedImage}
+                                                        alt="Preview"
+                                                        width={64}
+                                                        height={64}
+                                                        className="w-16 h-16 rounded-full object-cover border-2 border-gray-600"
+                                                        unoptimized
+                                                    />
+                                                    <span className="text-gray-300 text-sm">New image selected</span>
+                                                </div>
+                                                <div className="flex items-center space-x-3">
+                                                    <button
+                                                        onClick={handleUploadImage}
+                                                        disabled={isSaving}
+                                                        className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                    >
+                                                        {isSaving ? 'Uploading...' : 'Save Image'}
+                                                    </button>
+                                                    <button
+                                                        onClick={cancelImageUpload}
+                                                        disabled={isSaving}
+                                                        className="border border-gray-500 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                    >
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-gray-200 text-sm">
+                                                    {user?.image ? 'Custom image uploaded' : (user?.picture ? 'Using Google profile picture' : 'No picture set')}
+                                                </span>
+                                                <button
+                                                    onClick={() => fileInputRef.current?.click()}
+                                                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                >
+                                                    Upload Image
+                                                </button>
+                                            </div>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
 

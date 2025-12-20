@@ -18,6 +18,7 @@ interface PistonResponse {
 }
 
 interface AvatarInfo {
+    userId: string;
     displayName: string;
     picture?: string;
 }

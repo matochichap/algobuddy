@@ -1,9 +1,10 @@
 'use client';
 import Header from '@/components/Header';
+import UserAvatar from '@/components/UserAvatar';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { User, UserRole } from 'shared';
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState, useRef } from 'react';
 import { getEnumDisplayName } from '@/utils/common';
 
 export default function AdminUsersPage() {
@@ -15,8 +16,10 @@ export default function AdminUsersPage() {
     const [results, setResults] = useState<User[]>([]);
     const [selected, setSelected] = useState<User | null>(null);
     const [editing, setEditing] = useState<User | null>(null);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [busy, setBusy] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const handleSearch = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -58,10 +61,17 @@ export default function AdminUsersPage() {
         setBusy(true);
         setError(null);
         try {
-            const { id, displayName, firstName, lastName, picture, email, role } = editing as User & { role?: User['role'] };
+            const { id, displayName, firstName, lastName, email, role } = editing as User;
+            const body: Partial<User> = { displayName, firstName, lastName, email, role };
+
+            // Include image if one was selected
+            if (selectedImage) {
+                body.image = selectedImage;
+            }
+
             const res = await authFetch(`${process.env.NEXT_PUBLIC_USER_SERVICE_BASE_URL}/api/user/${encodeURIComponent(id)}`, {
                 method: 'PUT',
-                body: JSON.stringify({ displayName, firstName, lastName, picture, email, role })
+                body: JSON.stringify(body)
             });
             if (!res.ok) {
                 const text = await res.text();
@@ -72,12 +82,47 @@ export default function AdminUsersPage() {
             setResults(prev => prev.map(u => u.google_id === updated.google_id ? updated : u));
             setSelected(updated);
             setEditing(updated);
+            setSelectedImage(null);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
         } catch (err) {
             console.error(err);
             setError('Failed to update user');
         } finally {
             setBusy(false);
             refreshAccessToken();
+        }
+    };
+
+    const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            setError('Please select an image file');
+            return;
+        }
+
+        // Validate file size (max 1MB)
+        if (file.size > 1 * 1024 * 1024) {
+            setError('Image must be less than 1MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            setSelectedImage(event.target?.result as string);
+            setError(null);
+        };
+        reader.readAsDataURL(file);
+    };
+
+    const cancelImageSelection = () => {
+        setSelectedImage(null);
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
         }
     };
 
@@ -149,22 +194,17 @@ export default function AdminUsersPage() {
                                             className={`p-4 rounded-lg cursor-pointer transition-all ${selected?.id === u.id
                                                 ? 'bg-blue-600/20 border-2 border-blue-500'
                                                 : 'bg-gray-800 border border-gray-700 hover:border-gray-500 hover:bg-gray-750'}`}
-                                            onClick={() => { setSelected(u); setEditing(u); }}
+                                            onClick={() => { setSelected(u); setEditing(u); setSelectedImage(null); if (fileInputRef.current) fileInputRef.current.value = ''; }}
                                         >
                                             <div className="flex items-center gap-4">
-                                                {u.picture ? (
-                                                    <Image
-                                                        src={u.picture}
-                                                        alt={u.displayName || ""}
-                                                        width={44}
-                                                        height={44}
-                                                        className="w-11 h-11 rounded-full object-cover border-2 border-gray-600"
-                                                    />
-                                                ) : (
-                                                    <div className="w-11 h-11 bg-gray-700 rounded-full flex items-center justify-center border-2 border-gray-600">
-                                                        <span className="text-base font-medium text-gray-200">{(u.displayName || u.firstName || '?').charAt(0).toUpperCase()}</span>
-                                                    </div>
-                                                )}
+                                                <UserAvatar
+                                                    image={u.image}
+                                                    picture={u.picture}
+                                                    displayName={u.displayName}
+                                                    firstName={u.firstName}
+                                                    size="md"
+                                                    border="thin"
+                                                />
                                                 <div className="flex-1">
                                                     <div className="text-gray-100 font-medium flex items-center gap-2 mb-1">
                                                         <span>{u.displayName || '(no name)'}</span>
@@ -239,13 +279,59 @@ export default function AdminUsersPage() {
                                                     </select>
                                                 </div>
                                                 <div className="lg:col-span-2">
-                                                    <label className="block text-sm font-medium text-gray-300 mb-2">Picture URL</label>
+                                                    <label className="block text-sm font-medium text-gray-300 mb-2">Profile Picture</label>
                                                     <input
-                                                        className="w-full bg-gray-800 text-gray-100 rounded-lg px-4 py-2.5 border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
-                                                        value={editing.picture || ''}
-                                                        onChange={(e) => setEditing({ ...editing, picture: e.target.value })}
+                                                        type="file"
+                                                        ref={fileInputRef}
+                                                        accept="image/*"
+                                                        onChange={handleImageSelect}
+                                                        className="hidden"
                                                         disabled={busy}
                                                     />
+
+                                                    <div className="flex items-center gap-4">
+                                                        {/* Show preview if selected, otherwise show current avatar */}
+                                                        {selectedImage ? (
+                                                            <Image
+                                                                src={selectedImage}
+                                                                alt="Preview"
+                                                                width={44}
+                                                                height={44}
+                                                                className="w-11 h-11 rounded-full object-cover border-2 border-gray-600"
+                                                                unoptimized
+                                                            />
+                                                        ) : (
+                                                            <UserAvatar
+                                                                image={editing.image}
+                                                                picture={editing.picture}
+                                                                displayName={editing.displayName}
+                                                                firstName={editing.firstName}
+                                                                size="md"
+                                                                border="thin"
+                                                            />
+                                                        )}
+
+                                                        <div className="flex-1 flex items-center gap-3">
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => fileInputRef.current?.click()}
+                                                                disabled={busy}
+                                                                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                            >
+                                                                {selectedImage ? 'Change Image' : 'Upload Image'}
+                                                            </button>
+                                                            {selectedImage && (
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={cancelImageSelection}
+                                                                    disabled={busy}
+                                                                    className="border border-gray-500 hover:bg-gray-600 text-gray-200 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+                                                                >
+                                                                    Cancel
+                                                                </button>
+                                                            )}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 

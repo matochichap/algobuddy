@@ -13,11 +13,7 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'lh3.googleusercontent.com',
         pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: '**', // allow any external domain (for user-uploaded images)
-      },
+      }
     ]
   }
 };

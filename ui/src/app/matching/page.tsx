@@ -4,8 +4,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useMatch } from "@/contexts/MatchContext";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Header from "@/components/Header";
+import UserAvatar from "@/components/UserAvatar";
 import { io, Socket } from "socket.io-client";
 import { MatchedUserInfo, Difficulty, Topic, Language } from "shared";
 import { getEnumDisplayName, getLanguageDisplayName } from "@/utils/common";
@@ -176,21 +176,14 @@ export default function MatchingPage() {
                             </div>
 
                             <div className="flex flex-col items-center mb-6">
-                                {matchedUser.picture ? (
-                                    <Image
-                                        src={matchedUser.picture}
-                                        alt={matchedUser.displayName || 'User'}
-                                        width={80}
-                                        height={80}
-                                        className="rounded-full border-2 border-gray-600"
-                                    />
-                                ) : (
-                                    <div className="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center border-2 border-gray-600">
-                                        <span className="text-3xl text-white">
-                                            {matchedUser.displayName?.[0]?.toUpperCase() || '?'}
-                                        </span>
-                                    </div>
-                                )}
+                                <UserAvatar
+                                    userId={matchedUser.userId}
+                                    authFetch={authFetch}
+                                    picture={matchedUser.picture}
+                                    displayName={matchedUser.displayName}
+                                    size="xl"
+                                    border="thin"
+                                />
 
                                 <h3 className="text-xl font-bold text-gray-100 mt-3">
                                     {matchedUser.displayName || 'Anonymous User'}

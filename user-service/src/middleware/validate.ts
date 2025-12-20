@@ -60,6 +60,10 @@ export const userSchemas = {
             picture: z.url().refine((url) => url.startsWith('https://'), {
                 message: 'Picture must be a HTTP/HTTPS URL'
             }).optional(),
+            image: z.string().refine((data) => {
+                // Validate base64 image data (data URL format)
+                return data.startsWith('data:image/') && data.includes(';base64,');
+            }, { message: 'Image must be a valid base64 data URL' }).optional(),
         }).refine((data: Record<string, unknown>) => Object.keys(data).length > 0, {
             message: 'At least one field must be provided',
         })
@@ -88,6 +92,10 @@ export const userSchemas = {
             picture: z.url().refine((url) => url.startsWith('https://'), {
                 message: 'Picture must be a HTTP/HTTPS URL'
             }).optional(),
+            image: z.string().refine((data) => {
+                // Validate base64 image data (data URL format)
+                return data.startsWith('data:image/') && data.includes(';base64,');
+            }, { message: 'Image must be a valid base64 data URL' }).optional(),
             email: z.email().optional(),
             role: z.enum([UserRole.USER, UserRole.ADMIN]).optional(),
         }).refine((data: Record<string, unknown>) => Object.keys(data).length > 0, {
@@ -98,6 +106,12 @@ export const userSchemas = {
     deleteUserSchema: {
         params: z.object({
             id: z.string().min(1),
+        })
+    },
+
+    getImageSchema: {
+        params: z.object({
+            id: z.string().min(1, 'User ID is required'),
         })
     },
 

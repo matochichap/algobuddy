@@ -19,6 +19,14 @@ userRouter.all("/api/user/me",
     httpProxy(USER_SERVICE_URL)
 );
 
+// User and Admin accessible - /api/user/image/:id (profile images)
+userRouter.get("/api/user/image/:id",
+    verifyAccessToken,
+    authorizedRoles([UserRole.USER, UserRole.ADMIN]),
+    attachUserFromJwt,
+    httpProxy(USER_SERVICE_URL)
+);
+
 // Admin-only user routes - /api/user/search and /api/user/:id
 userRouter.get("/api/user/search",
     verifyAccessToken,

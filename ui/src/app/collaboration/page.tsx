@@ -7,13 +7,13 @@ import * as Y from "yjs";
 import { MonacoBinding } from "y-monaco";
 import Editor from "@monaco-editor/react";
 import Spinner from "@/components/Spinner";
+import UserAvatar from "@/components/UserAvatar";
 import { useRouter } from "next/navigation";
 import { Question, Difficulty } from "shared";
 import { useUser } from "@/contexts/UserContext";
 import Link from 'next/link';
 import { getEnumDisplayName, getLanguageDisplayName } from "@/utils/common";
 import { ChatMessage, PistonResponse, AvatarInfo } from "@/types/collaboration";
-import Image from "next/image";
 
 export default function CollaborationPage() {
     const [question, setQuestion] = useState<Question | null>(null);
@@ -173,8 +173,8 @@ export default function CollaborationPage() {
             socket.on("online-users", (onlineUserIds: string[]) => {
                 if (!isMounted) return;
                 const onlineUsers = onlineUserIds.map(id => {
-                    if (id === user?.id) return { displayName: user.displayName, picture: user.picture };
-                    if (id === matchedUser.userId) return { displayName: matchedUser.displayName, picture: matchedUser.picture };
+                    if (id === user?.id) return { userId: user.id, displayName: user.displayName, picture: user.picture };
+                    if (id === matchedUser.userId) return { userId: matchedUser.userId, displayName: matchedUser.displayName, picture: matchedUser.picture };
                     return null;
                 }).filter(id => id !== null) as AvatarInfo[];
                 setOnlineUsers(onlineUsers);
@@ -242,29 +242,18 @@ export default function CollaborationPage() {
                         </div>
                         <div className="flex items-center gap-2">
                             {
-                                onlineUsers.map((avatar, idx) => {
-                                    return avatar.picture ? (
-                                        <Image
-                                            key={idx}
-                                            src={avatar.picture}
-                                            alt={avatar.displayName || ""}
-                                            title={avatar.displayName || ""}
-                                            width={32}
-                                            height={32}
-                                            className="w-8 h-8 rounded-full object-cover border border-gray-500 hover:border-gray-400"
+                                onlineUsers.map((avatar, idx) => (
+                                    <div key={idx} title={avatar.displayName}>
+                                        <UserAvatar
+                                            userId={avatar.userId}
+                                            authFetch={authFetch}
+                                            picture={avatar.picture}
+                                            displayName={avatar.displayName}
+                                            size="sm"
+                                            className="hover:opacity-80 transition-opacity"
                                         />
-                                    ) : (
-                                        <div
-                                            key={idx}
-                                            title={avatar.displayName || ""}
-                                            className="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500"
-                                        >
-                                            <span className="text-sm font-medium text-gray-200">
-                                                {avatar.displayName?.charAt(0).toUpperCase() || ""}
-                                            </span>
-                                        </div>
-                                    )
-                                })
+                                    </div>
+                                ))
                             }
                         </div>
                     </div>
