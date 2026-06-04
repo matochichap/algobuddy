@@ -10,7 +10,7 @@
     "module": "commonjs",
     "target": "es2016",
     "esModuleInterop": true,
-    "baseUrl": ".",
+    // "baseUrl": ".",
     // "types": [],
     // For nodejs:
     // "lib": ["esnext"],
