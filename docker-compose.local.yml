@@ -3,12 +3,12 @@
 name: algobuddy-local
 services:
   ui:
-    image: ui:latest
+    image: ghcr.io/matochichap/algobuddy-ui:latest
     hostname: "ui"
     networks:
       - algobuddy
   api-gateway:
-    image: api-gateway:latest
+    image: ghcr.io/matochichap/algobuddy-api-gateway:latest
     env_file:
       - ./.env.production.local
     ports:
@@ -16,7 +16,7 @@ services:
     networks:
       - algobuddy
   user-service:
-    image: user-service:latest
+    image: ghcr.io/matochichap/algobuddy-user-service:latest
     hostname: "user-service"
     env_file:
       - ./.env.production.local
@@ -26,7 +26,7 @@ services:
       - mongo-init
       - redis
   matching-service:
-    image: matching-service:latest
+    image: ghcr.io/matochichap/algobuddy-matching-service:latest
     hostname: "matching-service"
     env_file:
       - ./.env.production.local
@@ -35,7 +35,7 @@ services:
     depends_on:
       - redis
   question-service:
-    image: question-service:latest
+    image: ghcr.io/matochichap/algobuddy-question-service:latest
     hostname: "question-service"
     env_file:
       - ./.env.production.local
@@ -44,7 +44,7 @@ services:
     depends_on:
       - mongo-init
   collaboration-service:
-    image: collaboration-service:latest
+    image: ghcr.io/matochichap/algobuddy-collaboration-service:latest
     hostname: "collaboration-service"
     env_file:
       - ./.env.production.local
@@ -80,7 +80,6 @@ services:
 
 networks:
   algobuddy:
-
 
 volumes:
   redis_data:

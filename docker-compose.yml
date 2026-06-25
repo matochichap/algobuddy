@@ -11,14 +11,14 @@ services:
         NEXT_PUBLIC_QUESTION_SERVICE_BASE_URL: ${API_GATEWAY_BASE_URL}
         NEXT_PUBLIC_COLLABORATION_SERVICE_BASE_URL: ${API_GATEWAY_BASE_URL}
         NEXT_PUBLIC_PISTON_API_BASE_URL: ${PISTON_API_BASE_URL}
-    image: ui:latest
+    image: ghcr.io/matochichap/algobuddy-ui:latest
     networks:
       - algobuddy
   api-gateway:
     build:
       context: .
       dockerfile: api-gateway/Dockerfile
-    image: api-gateway:latest
+    image: ghcr.io/matochichap/algobuddy-api-gateway:latest
     env_file:
       - ./.env.production
     ports:
@@ -29,7 +29,7 @@ services:
     build:
       context: .
       dockerfile: user-service/Dockerfile
-    image: user-service:latest
+    image: ghcr.io/matochichap/algobuddy-user-service:latest
     hostname: "user-service"
     env_file:
       - ./.env.production
@@ -39,7 +39,7 @@ services:
     build:
       context: .
       dockerfile: matching-service/Dockerfile
-    image: matching-service:latest
+    image: ghcr.io/matochichap/algobuddy-matching-service:latest
     hostname: "matching-service"
     env_file:
       - ./.env.production
@@ -49,7 +49,7 @@ services:
     build:
       context: .
       dockerfile: question-service/Dockerfile
-    image: question-service:latest
+    image: ghcr.io/matochichap/algobuddy-question-service:latest
     hostname: "question-service"
     env_file:
       - ./.env.production
@@ -59,7 +59,7 @@ services:
     build:
       context: .
       dockerfile: collaboration-service/Dockerfile
-    image: collaboration-service:latest
+    image: ghcr.io/matochichap/algobuddy-collaboration-service:latest
     hostname: "collaboration-service"
     env_file:
       - ./.env.production
